@@ -1,0 +1,59 @@
+\hypertarget{Command__giver_8py}{}\section{scripts/\+Command\+\_\+giver.py File Reference}
+\label{Command__giver_8py}\index{scripts/\+Command\+\_\+giver.\+py@{scripts/\+Command\+\_\+giver.\+py}}
+
+
+Component that gives command either randomly generated or given by a user, switching between the two.  
+
+
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{Command__giver_8py_a4a6d5cbbee4af6d7048bd06047255889}{Command\+\_\+giver.\+pub} = rospy.\+Publisher(\char`\"{}commander\char`\"{},String,queue\+\_\+size=10)
+\begin{DoxyCompactList}\small\item\em Variable declaration. \end{DoxyCompactList}\item 
+int {\bfseries Command\+\_\+giver.\+cmd\+\_\+gen} = 0\hypertarget{Command__giver_8py_a803b2b7ff72cc1b18c419be9a062021e}{}\label{Command__giver_8py_a803b2b7ff72cc1b18c419be9a062021e}
+
+\item 
+\hyperlink{Command__giver_8py_a3fc07d631a374497e2a0fccc8bb1ccdd}{Command\+\_\+giver.\+value} = random.\+randrange(30,45,5)
+\begin{DoxyCompactList}\small\item\em Concatenate a lis t of commands. \end{DoxyCompactList}\item 
+string {\bfseries Command\+\_\+giver.\+strings} = \char`\"{}\char`\"{}\hypertarget{Command__giver_8py_a7978b9d5f6b82ba4ee7dc49d2453e970}{}\label{Command__giver_8py_a7978b9d5f6b82ba4ee7dc49d2453e970}
+
+\item 
+{\bfseries Command\+\_\+giver.\+leng} = random.\+randrange(1,5,1)\hypertarget{Command__giver_8py_a025a1b6259531fe33224caac39ef4b7b}{}\label{Command__giver_8py_a025a1b6259531fe33224caac39ef4b7b}
+
+\item 
+\hyperlink{Command__giver_8py_ab183e03b2130f54244266f032764fcd0}{Command\+\_\+giver.\+xtar} = random.\+randrange(1,11,1)\hypertarget{Command__giver_8py_ab183e03b2130f54244266f032764fcd0}{}\label{Command__giver_8py_ab183e03b2130f54244266f032764fcd0}
+
+\begin{DoxyCompactList}\small\item\em choose a target inside the map \end{DoxyCompactList}\item 
+{\bfseries Command\+\_\+giver.\+ytar} = random.\+randrange(1,11,1)\hypertarget{Command__giver_8py_a1a218322646e0f384ca7874f04e60a48}{}\label{Command__giver_8py_a1a218322646e0f384ca7874f04e60a48}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Component that gives command either randomly generated or given by a user, switching between the two. 
+
+Details\+: This component is the one that inputs commands inside the pet\+\_\+simulation, either it randomly generates random string command or receives them from the user 
+
+\subsection{Variable Documentation}
+\index{Command\+\_\+giver.\+py@{Command\+\_\+giver.\+py}!pub@{pub}}
+\index{pub@{pub}!Command\+\_\+giver.\+py@{Command\+\_\+giver.\+py}}
+\subsubsection[{\texorpdfstring{pub}{pub}}]{\setlength{\rightskip}{0pt plus 5cm}Command\+\_\+giver.\+pub = rospy.\+Publisher(\char`\"{}commander\char`\"{},String,queue\+\_\+size=10)}\hypertarget{Command__giver_8py_file_a4a6d5cbbee4af6d7048bd06047255889}{}\label{Command__giver_8py_file_a4a6d5cbbee4af6d7048bd06047255889}
+
+
+Variable declaration. 
+
+Main function declaration Init the ros node 
+
+Definition at line 25 of file Command\+\_\+giver.\+py.
+
+\index{Command\+\_\+giver.\+py@{Command\+\_\+giver.\+py}!value@{value}}
+\index{value@{value}!Command\+\_\+giver.\+py@{Command\+\_\+giver.\+py}}
+\subsubsection[{\texorpdfstring{value}{value}}]{\setlength{\rightskip}{0pt plus 5cm}Command\+\_\+giver.\+value = random.\+randrange(30,45,5)}\hypertarget{Command__giver_8py_file_a3fc07d631a374497e2a0fccc8bb1ccdd}{}\label{Command__giver_8py_file_a3fc07d631a374497e2a0fccc8bb1ccdd}
+
+
+Concatenate a lis t of commands. 
+
+chose whether to point or tell to go 
+
+Definition at line 29 of file Command\+\_\+giver.\+py.
+
