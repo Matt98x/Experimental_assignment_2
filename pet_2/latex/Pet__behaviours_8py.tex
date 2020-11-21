@@ -1,0 +1,100 @@
+\hypertarget{Pet__behaviours_8py}{}\section{scripts/\+Pet\+\_\+behaviours.py File Reference}
+\label{Pet__behaviours_8py}\index{scripts/\+Pet\+\_\+behaviours.\+py@{scripts/\+Pet\+\_\+behaviours.\+py}}
+
+
+Pet state machine.  
+
+
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classPet__behaviours_1_1Sleep}{Pet\+\_\+behaviours.\+Sleep}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classPet__behaviours_1_1Sleep}{Sleep}\+: class that describes the \hyperlink{classPet__behaviours_1_1Sleep}{Sleep} state. \end{DoxyCompactList}\item 
+class \hyperlink{classPet__behaviours_1_1Normal}{Pet\+\_\+behaviours.\+Normal}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classPet__behaviours_1_1Normal}{Normal}\+: class that describes the \hyperlink{classPet__behaviours_1_1Normal}{Normal} state. \end{DoxyCompactList}\item 
+class \hyperlink{classPet__behaviours_1_1Play}{Pet\+\_\+behaviours.\+Play}
+\begin{DoxyCompactList}\small\item\em \hyperlink{classPet__behaviours_1_1Play}{Play}\+: class that describes the \hyperlink{classPet__behaviours_1_1Play}{Play} state. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+def \hyperlink{Pet__behaviours_8py_ac416f11d9f795118d4795f22f4b43234}{Pet\+\_\+behaviours.\+go\+\_\+to\+\_\+target} (xtar, ytar)\hypertarget{Pet__behaviours_8py_ac416f11d9f795118d4795f22f4b43234}{}\label{Pet__behaviours_8py_ac416f11d9f795118d4795f22f4b43234}
+
+\begin{DoxyCompactList}\small\item\em go\+\_\+to\+\_\+target\+: function to go to a target specified by the coordinates (xtar,ytar) \end{DoxyCompactList}\item 
+def \hyperlink{Pet__behaviours_8py_aa13193e5cc4138c5687609d1f644cc27}{Pet\+\_\+behaviours.\+roam} ()\hypertarget{Pet__behaviours_8py_aa13193e5cc4138c5687609d1f644cc27}{}\label{Pet__behaviours_8py_aa13193e5cc4138c5687609d1f644cc27}
+
+\begin{DoxyCompactList}\small\item\em roam\+: function to simulate the roaming behaviour of normal \end{DoxyCompactList}\item 
+def \hyperlink{Pet__behaviours_8py_a34ab7be91b1041bbd6b691f9a0a72b9c}{Pet\+\_\+behaviours.\+simcallback} (data)\hypertarget{Pet__behaviours_8py_a34ab7be91b1041bbd6b691f9a0a72b9c}{}\label{Pet__behaviours_8py_a34ab7be91b1041bbd6b691f9a0a72b9c}
+
+\begin{DoxyCompactList}\small\item\em simcallback\+: callback for the simulated pet position \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{Pet__behaviours_8py_aa2ca9b121e3facefb6575cedc3612b4b}{Pet\+\_\+behaviours.\+x} = 0\hypertarget{Pet__behaviours_8py_aa2ca9b121e3facefb6575cedc3612b4b}{}\label{Pet__behaviours_8py_aa2ca9b121e3facefb6575cedc3612b4b}
+
+\begin{DoxyCompactList}\small\item\em Variable definition global x position. \end{DoxyCompactList}\item 
+int \hyperlink{Pet__behaviours_8py_afb7e96c8fdcc67add7d701aca7ba5573}{Pet\+\_\+behaviours.\+y} = 0\hypertarget{Pet__behaviours_8py_afb7e96c8fdcc67add7d701aca7ba5573}{}\label{Pet__behaviours_8py_afb7e96c8fdcc67add7d701aca7ba5573}
+
+\begin{DoxyCompactList}\small\item\em global y position \end{DoxyCompactList}\item 
+int \hyperlink{Pet__behaviours_8py_aee2de25e04c0eb0fd3fc0dc3260a6f46}{Pet\+\_\+behaviours.\+theta} = 0\hypertarget{Pet__behaviours_8py_aee2de25e04c0eb0fd3fc0dc3260a6f46}{}\label{Pet__behaviours_8py_aee2de25e04c0eb0fd3fc0dc3260a6f46}
+
+\begin{DoxyCompactList}\small\item\em global theta position \end{DoxyCompactList}\item 
+int \hyperlink{Pet__behaviours_8py_aa0d0b7436444bfcec6f8cf6a24f051ca}{Pet\+\_\+behaviours.\+comm} = 0\hypertarget{Pet__behaviours_8py_aa0d0b7436444bfcec6f8cf6a24f051ca}{}\label{Pet__behaviours_8py_aa0d0b7436444bfcec6f8cf6a24f051ca}
+
+\begin{DoxyCompactList}\small\item\em command received \end{DoxyCompactList}\item 
+int \hyperlink{Pet__behaviours_8py_ae0261eeb91fe5de1751fe9cc1935c8f4}{Pet\+\_\+behaviours.\+xt} = 0\hypertarget{Pet__behaviours_8py_ae0261eeb91fe5de1751fe9cc1935c8f4}{}\label{Pet__behaviours_8py_ae0261eeb91fe5de1751fe9cc1935c8f4}
+
+\begin{DoxyCompactList}\small\item\em x target \end{DoxyCompactList}\item 
+int \hyperlink{Pet__behaviours_8py_a168a8f64fdcb791cb4ae88efb5232fc8}{Pet\+\_\+behaviours.\+yt} = 0\hypertarget{Pet__behaviours_8py_a168a8f64fdcb791cb4ae88efb5232fc8}{}\label{Pet__behaviours_8py_a168a8f64fdcb791cb4ae88efb5232fc8}
+
+\begin{DoxyCompactList}\small\item\em y target \end{DoxyCompactList}\item 
+float \hyperlink{Pet__behaviours_8py_a05cba7438bef49d22f2c83249f468514}{Pet\+\_\+behaviours.\+timer} = 0.\+5\hypertarget{Pet__behaviours_8py_a05cba7438bef49d22f2c83249f468514}{}\label{Pet__behaviours_8py_a05cba7438bef49d22f2c83249f468514}
+
+\begin{DoxyCompactList}\small\item\em delay timer \end{DoxyCompactList}\item 
+int \hyperlink{Pet__behaviours_8py_a7bdda0ae2ea8280a4576241a122b0a5d}{Pet\+\_\+behaviours.\+pub} = 0\hypertarget{Pet__behaviours_8py_a7bdda0ae2ea8280a4576241a122b0a5d}{}\label{Pet__behaviours_8py_a7bdda0ae2ea8280a4576241a122b0a5d}
+
+\begin{DoxyCompactList}\small\item\em background color publisher \end{DoxyCompactList}\item 
+int \hyperlink{Pet__behaviours_8py_acb6617ff10cb1900363cbec0b0198c06}{Pet\+\_\+behaviours.\+resets} = 0\hypertarget{Pet__behaviours_8py_acb6617ff10cb1900363cbec0b0198c06}{}\label{Pet__behaviours_8py_acb6617ff10cb1900363cbec0b0198c06}
+
+\begin{DoxyCompactList}\small\item\em background resets \end{DoxyCompactList}\item 
+\hyperlink{Pet__behaviours_8py_a06621618a7dee5915598d47a610431e4}{Pet\+\_\+behaviours.\+teleportabs} = rospy.\+Service\+Proxy(\textquotesingle{}/turtle1/teleport\+\_\+absolute\textquotesingle{}, Teleport\+Absolute)
+\begin{DoxyCompactList}\small\item\em Main function declaration. \end{DoxyCompactList}\item 
+\hyperlink{Pet__behaviours_8py_afeb58c147d02f423a6007b511c89cf51}{Pet\+\_\+behaviours.\+sm\+\_\+s\+\_\+a} = smach.\+State\+Machine(outcomes=\mbox{[}\textquotesingle{}outcome4\textquotesingle{}\mbox{]})\hypertarget{Pet__behaviours_8py_afeb58c147d02f423a6007b511c89cf51}{}\label{Pet__behaviours_8py_afeb58c147d02f423a6007b511c89cf51}
+
+\begin{DoxyCompactList}\small\item\em Create a S\+M\+A\+CH state machine. \end{DoxyCompactList}\item 
+\hyperlink{Pet__behaviours_8py_a30f56769923a0b61fc3be32e119a2afa}{Pet\+\_\+behaviours.\+transitions}
+\begin{DoxyCompactList}\small\item\em Open the container. \end{DoxyCompactList}\item 
+\hyperlink{Pet__behaviours_8py_af096456cf166ae9c4c159843b5ea1421}{Pet\+\_\+behaviours.\+outcome} = sm\+\_\+s\+\_\+a.\+execute()\hypertarget{Pet__behaviours_8py_af096456cf166ae9c4c159843b5ea1421}{}\label{Pet__behaviours_8py_af096456cf166ae9c4c159843b5ea1421}
+
+\begin{DoxyCompactList}\small\item\em Execute S\+M\+A\+CH plan. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Pet state machine. 
+
+Details\+: This component simulate the behaviour state machine 
+
+\subsection{Variable Documentation}
+\index{Pet\+\_\+behaviours.\+py@{Pet\+\_\+behaviours.\+py}!teleportabs@{teleportabs}}
+\index{teleportabs@{teleportabs}!Pet\+\_\+behaviours.\+py@{Pet\+\_\+behaviours.\+py}}
+\subsubsection[{\texorpdfstring{teleportabs}{teleportabs}}]{\setlength{\rightskip}{0pt plus 5cm}Pet\+\_\+behaviours.\+teleportabs = rospy.\+Service\+Proxy(\textquotesingle{}/turtle1/teleport\+\_\+absolute\textquotesingle{}, Teleport\+Absolute)}\hypertarget{Pet__behaviours_8py_file_a06621618a7dee5915598d47a610431e4}{}\label{Pet__behaviours_8py_file_a06621618a7dee5915598d47a610431e4}
+
+
+Main function declaration. 
+
+Init the ros node 
+
+Definition at line 219 of file Pet\+\_\+behaviours.\+py.
+
+\index{Pet\+\_\+behaviours.\+py@{Pet\+\_\+behaviours.\+py}!transitions@{transitions}}
+\index{transitions@{transitions}!Pet\+\_\+behaviours.\+py@{Pet\+\_\+behaviours.\+py}}
+\subsubsection[{\texorpdfstring{transitions}{transitions}}]{\setlength{\rightskip}{0pt plus 5cm}Pet\+\_\+behaviours.\+transitions}\hypertarget{Pet__behaviours_8py_file_a30f56769923a0b61fc3be32e119a2afa}{}\label{Pet__behaviours_8py_file_a30f56769923a0b61fc3be32e119a2afa}
+
+
+Open the container. 
+
+Add states to the container.
+
+Add states to the container 
+
+Definition at line 233 of file Pet\+\_\+behaviours.\+py.
+

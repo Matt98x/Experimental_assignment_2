@@ -1,0 +1,98 @@
+\hypertarget{classPet__behaviours_1_1Play}{}\section{Pet\+\_\+behaviours.\+Play Class Reference}
+\label{classPet__behaviours_1_1Play}\index{Pet\+\_\+behaviours.\+Play@{Pet\+\_\+behaviours.\+Play}}
+
+
+\hyperlink{classPet__behaviours_1_1Play}{Play}\+: class that describes the \hyperlink{classPet__behaviours_1_1Play}{Play} state.  
+
+
+
+
+Inheritance diagram for Pet\+\_\+behaviours.\+Play\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=193pt]{classPet__behaviours_1_1Play__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for Pet\+\_\+behaviours.\+Play\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=193pt]{classPet__behaviours_1_1Play__coll__graph}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+def {\bfseries \+\_\+\+\_\+init\+\_\+\+\_\+} (self)\hypertarget{classPet__behaviours_1_1Play_abaa16a6b254a58dfa47da4c3cca55b20}{}\label{classPet__behaviours_1_1Play_abaa16a6b254a58dfa47da4c3cca55b20}
+
+\item 
+def {\bfseries execute} (self, userdata)\hypertarget{classPet__behaviours_1_1Play_a03948eb0dd2c9595f88741a11199271a}{}\label{classPet__behaviours_1_1Play_a03948eb0dd2c9595f88741a11199271a}
+
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+{\bfseries cmdrcv}\hypertarget{classPet__behaviours_1_1Play_aada475410ff2bedf7fd94f7aff1be5d9}{}\label{classPet__behaviours_1_1Play_aada475410ff2bedf7fd94f7aff1be5d9}
+
+\item 
+\hyperlink{classPet__behaviours_1_1Play_ad7ecb0f90069cd70ebc3f86f92b51415}{strings} = cmdrcv().status\hypertarget{classPet__behaviours_1_1Play_ad7ecb0f90069cd70ebc3f86f92b51415}{}\label{classPet__behaviours_1_1Play_ad7ecb0f90069cd70ebc3f86f92b51415}
+
+\begin{DoxyCompactList}\small\item\em if the command is received Extract the command \end{DoxyCompactList}\item 
+\hyperlink{classPet__behaviours_1_1Play_a0140f371bf2370c8f93925750383841f}{temp1} = strings.\+split(\char`\"{}$\vert$\char`\"{})
+\begin{DoxyCompactList}\small\item\em Find if the command is empty. \end{DoxyCompactList}\item 
+string {\bfseries strings} = \char`\"{}\char`\"{}\hypertarget{classPet__behaviours_1_1Play_a14f33bb8029ad809dce5dc5f3c52078f}{}\label{classPet__behaviours_1_1Play_a14f33bb8029ad809dce5dc5f3c52078f}
+
+\item 
+\hyperlink{classPet__behaviours_1_1Play_ae50b6080952ef514d49a0e56483ce25f}{temp2} = \hyperlink{classPet__behaviours_1_1Play_a0140f371bf2370c8f93925750383841f}{temp1}\mbox{[}i\mbox{]}.split(\char`\"{} \char`\"{})\hypertarget{classPet__behaviours_1_1Play_ae50b6080952ef514d49a0e56483ce25f}{}\label{classPet__behaviours_1_1Play_ae50b6080952ef514d49a0e56483ce25f}
+
+\begin{DoxyCompactList}\small\item\em parse each command in x and y \end{DoxyCompactList}\item 
+\hyperlink{classPet__behaviours_1_1Play_aa7e0891e996e7d38e850cc388516b0c7}{xtar} = int(\hyperlink{classPet__behaviours_1_1Play_ae50b6080952ef514d49a0e56483ce25f}{temp2}\mbox{[}0\mbox{]})
+\begin{DoxyCompactList}\small\item\em go owner \end{DoxyCompactList}\item 
+{\bfseries ytar} = int(\hyperlink{classPet__behaviours_1_1Play_ae50b6080952ef514d49a0e56483ce25f}{temp2}\mbox{[}1\mbox{]})\hypertarget{classPet__behaviours_1_1Play_ad298b18a3f0f68219a9d2abdfaf84e00}{}\label{classPet__behaviours_1_1Play_ad298b18a3f0f68219a9d2abdfaf84e00}
+
+\item 
+\hyperlink{classPet__behaviours_1_1Play_ad1cd8e207b954e328020bc5026bff92e}{state} = rospy.\+get\+\_\+param(\textquotesingle{}state\textquotesingle{})\hypertarget{classPet__behaviours_1_1Play_ad1cd8e207b954e328020bc5026bff92e}{}\label{classPet__behaviours_1_1Play_ad1cd8e207b954e328020bc5026bff92e}
+
+\begin{DoxyCompactList}\small\item\em check the state \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\hyperlink{classPet__behaviours_1_1Play}{Play}\+: class that describes the \hyperlink{classPet__behaviours_1_1Play}{Play} state. 
+
+Definition at line 140 of file Pet\+\_\+behaviours.\+py.
+
+
+
+\subsection{Member Data Documentation}
+\index{Pet\+\_\+behaviours\+::\+Play@{Pet\+\_\+behaviours\+::\+Play}!temp1@{temp1}}
+\index{temp1@{temp1}!Pet\+\_\+behaviours\+::\+Play@{Pet\+\_\+behaviours\+::\+Play}}
+\subsubsection[{\texorpdfstring{temp1}{temp1}}]{\setlength{\rightskip}{0pt plus 5cm}Pet\+\_\+behaviours.\+Play.\+temp1 = strings.\+split(\char`\"{}$\vert$\char`\"{})\hspace{0.3cm}{\ttfamily [static]}}\hypertarget{classPet__behaviours_1_1Play_a0140f371bf2370c8f93925750383841f}{}\label{classPet__behaviours_1_1Play_a0140f371bf2370c8f93925750383841f}
+
+
+Find if the command is empty. 
+
+if command received 
+
+Definition at line 156 of file Pet\+\_\+behaviours.\+py.
+
+\index{Pet\+\_\+behaviours\+::\+Play@{Pet\+\_\+behaviours\+::\+Play}!xtar@{xtar}}
+\index{xtar@{xtar}!Pet\+\_\+behaviours\+::\+Play@{Pet\+\_\+behaviours\+::\+Play}}
+\subsubsection[{\texorpdfstring{xtar}{xtar}}]{\setlength{\rightskip}{0pt plus 5cm}Pet\+\_\+behaviours.\+Play.\+xtar = int({\bf temp2}\mbox{[}0\mbox{]})\hspace{0.3cm}{\ttfamily [static]}}\hypertarget{classPet__behaviours_1_1Play_aa7e0891e996e7d38e850cc388516b0c7}{}\label{classPet__behaviours_1_1Play_aa7e0891e996e7d38e850cc388516b0c7}
+
+
+go owner 
+
+Check if in normal or not.
+
+Return to the owner when all commands are executed 
+
+Definition at line 162 of file Pet\+\_\+behaviours.\+py.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+scripts/\hyperlink{Pet__behaviours_8py}{Pet\+\_\+behaviours.\+py}\end{DoxyCompactItemize}
