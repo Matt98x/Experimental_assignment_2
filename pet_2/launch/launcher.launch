@@ -9,8 +9,8 @@
 
 
     <node pkg="turtlesim" name="sim" type="turtlesim_node"/>
-    <node pkg="pet_package" name="component2" type="Pet_logic.py" output="screen"/>
-    <node pkg="pet_package" name="component1" type="Pet_behaviours.py" output="screen"/>
-    <node pkg="pet_package" name="component3" type="Command_giver.py"/> 
+    <node pkg="pet_2" name="component2" type="Pet_logic.py" output="screen"/>
+    <node pkg="pet_2" name="component1" type="Pet_behaviours.py" output="screen"/>
+    <node pkg="pet_2" name="component3" type="Command_giver.py"/> 
  
 </launch>

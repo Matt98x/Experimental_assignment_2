@@ -9,8 +9,7 @@
 
 ##! Libraries declaration
 import rospy
-from geometry_msgs.msg import Twist
-from turtlesim.msg import Pose
+from geometry_msgs.msg import Twist, Point, Pose, PoseStamped
 from turtlesim.srv import *
 from std_msgs.msg import String
 from std_msgs.msg import Bool
@@ -20,19 +19,21 @@ import math
 import sys
 import random
 import time
+import actionlib
+import actionlib.msg
+import exp_assignment2.msg
 
 ## Variable declaration
 ## Command string
 command=[] 
 ## variable if a message is received
 msg_received=1 
+# action service client
+client = actionlib.SimpleActionClient('/reaching_goal', exp_assignment2.msg.PlanningAction)
+# Waits until the action server has started up and started
+# listening for goals.
+#client.wait_for_server()
 
-## srvCallback: service function to send the command to Pet_behaviours
-def srvCallback(req):
-	global command
-	temp=command
-	command=""
-	return temp
 
 
 ## comCallback: The callback that receive the command from the commander and convert them to a compliant format
@@ -51,37 +52,57 @@ def comCallback(msg):
 		for i in range(len(tlist)):
 			# split for every space
 			temp=tlist[i].split(" ")
-			if temp[0]=='play' and state==1 and len(temp)<3:
+			if temp[0]=='play' and state==1 and len(temp)<3: #Play state
 					rospy.set_param('state',2)
-			else:
-				for j in range(len(temp)-2):
-					state=rospy.get_param('state')
-					if state==2 and not temp[0]=='play':
-						if temp[j+2]=="home" or temp[j+2]=="owner":
-							temp_string+=str(rospy.get_param(str(temp[j+2])+str("/")+str("x")))
-							temp_string+=" "
-							temp_string+=str(rospy.get_param(str(temp[j+2])+str("/")+str("y")))
-						else:
-							temp_string+=str(temp[j+2])
-						if j<len(temp)-3:
-							temp_string+=" "
-				if i<len(tlist)-1:
-						temp_string+="|"
-			command=temp_string
+					pose=Pose()
+					pose.position.x=0
+					pose.position.y=0
+					pose.position.z=2
+					msg=PoseStamped()
+					msg.pose=pose
+					goal=exp_assignment2.msg.PlanningGoal(target_pose=msg)
+					# Sends the goal to the action server.
+		    			client.send_goal(goal)
+					client.wait_for_result()
+					rospy.loginfo('Coordinates :'+str(pose.position.x)+" "+str(pose.position.y))
+			else: # position command
+				
+				state=rospy.get_param('state')
+				if state==2 and not temp[0]=='play':
+					if temp[3]=="home" or temp[3]=="owner": #topological location
+						x=(rospy.get_param(str(temp[2])+str("/")+str("x")))
+						y=(rospy.get_param(str(temp[2])+str("/")+str("y")))
+					else: # geometrical location
+						x=temp[2] # the x component is the third component in the string 
+						y=temp[3] # the y component is the fourth component in the string
+					rospy.loginfo('Coordinates :'+str(x)+" "+str(y))
+					pose=Pose() #create a new pose
+					pose.position.x=int(x) #assign the x component
+					pose.position.y=int(y) #assign the y component
+					pose.position.z=0 # the z component is always zero for semplicity
+					msg=PoseStamped() # create the correct format
+					msg.pose=pose # assign the pose to it
+					goal=exp_assignment2.msg.PlanningGoal(target_pose=msg) # initialize a goal object with the correct format
+					# Sends the goal to the action server.
+	    				client.send_goal(goal)
+					client.wait_for_result()
+							
 
 
 
 ## Main function declaration
 if __name__ == '__main__':
 
+
 	## Init the ros nodek
 	rospy.init_node("pet_logic")
-	
+	client.wait_for_server()
 	# Declaration of the subscriber
 	rospy.Subscriber("commander",String,comCallback)
 	# Declaration of the service
-	s = rospy.Service('commandsrv', GetStatus, srvCallback)
+	#s = rospy.Service('commandsrv', GetStatus, srvCallback)
 	rate = rospy.Rate(5) # 10hz
+	
 	# Loop to change state randomly
 	while not rospy.is_shutdown():
 		value=random.randrange(15,45,5) #timer in which to change state (from 15 s to 1 and 1/2 min)

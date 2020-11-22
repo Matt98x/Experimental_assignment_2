@@ -8,12 +8,22 @@ project(pet_2)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  message_generation
+  cv_bridge
+  image_transport	
   roscpp
   rospy
   std_msgs
-
+  sensor_msgs
+  nav_msgs
+  geometry_msgs
+  std_msgs
+  message_generation
+  tf
+  actionlib_msgs
+  exp_assignment2
 )
+
+
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -68,11 +78,6 @@ find_package(catkin REQUIRED COMPONENTS
 #   Action2.action
 # )
 
-## Generate added messages and services with any dependencies listed here
- #generate_messages(
- #  DEPENDENCIES
- #  std_msgs
- #)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -107,7 +112,7 @@ catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES pet_package
 #  CATKIN_DEPENDS message_generation roscpp rospy std_msgs
-#  DEPENDS system_lib
+#  DEPENDS
 )
 
 ###########
