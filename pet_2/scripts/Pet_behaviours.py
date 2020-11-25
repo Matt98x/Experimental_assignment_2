@@ -143,11 +143,11 @@ class Play(smach.State):
         smach.State.__init__(self, outcomes=['outcome1','outcome2'])
 
     def execute(self, userdata):
-	cmdrcv=rospy.ServiceProxy('/commandsrv',GetStatus)
+
 	while True:
 		## if the command is received
 		## Extract the command
-		strings=cmdrcv().status
+		strings=""
 		strings=str(strings)
 		## Find if the command is empty
 		while not strings=="":

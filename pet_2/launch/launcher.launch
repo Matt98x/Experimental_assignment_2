@@ -2,8 +2,8 @@
 
 <param name="owner/x"  value="2" />
 <param name="owner/y"  value="2" />
-<param name="home/x"  value="7" />
-<param name="home/y"  value="8" />
+<param name="home/x"  value="5" />
+<param name="home/y"  value="5" />
 <param name="in_course"  value="0" />
 <param name="state"  value="1" />
 

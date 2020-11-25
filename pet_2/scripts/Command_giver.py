@@ -29,7 +29,7 @@ if __name__ == '__main__':
 		value=random.randrange(30,45,5) #timer in which to change state (from 15 s to 1 and 1/2 min)
 		time.sleep(value)
 		strings=""
-		leng=random.randrange(1,5,1)
+		leng=1
 		## Concatenate a lis t of commands
 		for i in range(leng):
 			value=random.randrange(1,10,1)
@@ -37,8 +37,8 @@ if __name__ == '__main__':
 				strings+="play"	
 			else:
 				## choose a target inside the map
-				xtar=random.randrange(1,11,1)
-				ytar=random.randrange(1,11,1)
+				xtar=random.randrange(-8,8,1)
+				ytar=random.randrange(-8,8,1)
 				## chose whether to point or tell to go
 				value=random.randrange(1,3,1)
 				if value==1:
