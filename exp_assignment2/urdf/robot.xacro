@@ -127,17 +127,17 @@
     <joint_properties damping="1.0" friction="1.0"/>
   </joint>
   
-  <link name="camera_link">
+  <link name="neck_link">
 	    <collision>
 	      <origin xyz="0 0 0.25" rpy="0 0 0"/>
 	      <geometry>
-		<box size="0.025 0.025 0.5"/>
+		<box size="0.07 0.07 0.3"/>
 	      </geometry>
 	    </collision>
 	    <visual>
-	      <origin xyz="0 0 0.25" rpy="0 0 0"/>
+	      <origin xyz="0 0 0.15" rpy="0 0 0"/>
 	      <geometry>
-		<box size="0.025 0.025 0.5"/>
+		<box size="0.07 0.07 0.3"/>
 	      </geometry>
 	      <material name="red">
 		<color rgba="1 0 0 1"/>
@@ -150,13 +150,54 @@
 	    </inertial> 
   </link>
   
-  <joint name="camera_joint" type="revolute">
+  <joint name="neck_joint" type="revolute">
 	    <axis xyz="0 0 1" />
-	    <origin xyz="0.0 0 0.035" rpy="0 0 0"/>
-	    <limit effort="1000.0" lower="-3.14" upper="3.14" velocity="0.2"/>
+	    <limit effort="1000.0" lower="-1.8" upper="1.8" velocity="0.5"/>
+	    <origin xyz="0.15 0 0.035" rpy="0 0 0"/>
 	    <parent link="link_chassis"/>
+	    <child link="neck_link"/> 
+	 </joint>
+
+  <link name="camera_link">
+	    <collision>
+	      <origin xyz="0 0 0.25" rpy="0 0 0"/>
+	      <geometry>
+		<box size="0.2 0.1 0.1"/>
+	      </geometry>
+	    </collision>
+	    <visual>
+	      <origin xyz="0 0 0.05" rpy="0 0 0"/>
+	      <geometry>
+		<box size="0.2 0.1 0.1"/>
+	      </geometry>
+	      <material name="red">
+		<color rgba="1 0 0 1"/>
+	      </material>
+	    </visual>
+	    <inertial>
+	      <mass value="1e-5" />
+	      <origin xyz="0 0 0" rpy="0 0 0"/>
+	      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+	    </inertial> 
+  </link>
+  
+  <joint name="camera_joint" type="fixed">
+	    <axis xyz="1 0 0" />
+	    <origin xyz="0.025 0 0.30" rpy="0 0 0"/>
+	    <parent link="neck_link"/>
 	    <child link="camera_link"/> 
 	 </joint>
 
+
+<transmission name="neck_joint_trans">
+	<type>transmission_interface/SimpleTransmission</type>
+	<joint name="neck_joint">
+		<hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+	</joint>
+	<actuator name="motor1">
+		<hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+		<mechanicalInterface>1</mechanicalInterface>
+	</actuator>
+</transmission>
 
 </robot>

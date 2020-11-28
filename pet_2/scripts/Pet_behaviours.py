@@ -8,20 +8,25 @@
 
 ## Libraries declaration
 import rospy
-from geometry_msgs.msg import Twist
-from turtlesim.msg import Pose
+
+
+from geometry_msgs.msg import Twist, Point, Pose, PoseStamped, Pose2D
 from turtlesim.srv import *
 from std_msgs.msg import String
 from std_msgs.msg import Bool
 from std_srvs.srv import Empty
 from robot_pose_ekf.srv import GetStatus
-from turtlesim.msg import Color
+from tf.transformations import euler_from_quaternion
+from nav_msgs.msg import Odometry
+import time
 import math
 import sys
 import random
 import smach
 import smach_ros
-import time
+import actionlib
+import actionlib.msg
+import exp_assignment2.msg
 
 
 ## Variable definition
@@ -43,52 +48,59 @@ timer=0.5
 pub=0
 ## background resets
 resets=0
+# action service client definition
+client = actionlib.SimpleActionClient('/robot/reaching_goal', exp_assignment2.msg.PlanningAction)
+## coordinates component of the ball
+x_comp=0
+y_comp=0
+z_comp=1
+## camera angle
+radius=0
+camera_angle=0
+## robot angle
+rob_angle=0
+
+## Callbacks for the subscribers
+def control_callback(ros_data):
+	global camera_angle , radius	
+	temp=list(ros_data.position)
+	camera_angle=ros_data.theta
+	radius=ros_data.x
+
+def angle_callback(ros_data):
+	global rob_angle
+	temp=ros_data.pose.pose.orientation
+	(roll, pitch, yaw) = euler_from_quaternion ([temp.x, temp.y, temp.z, temp.w])
+	rob_angle=yaw	
+
+## Subscribers definitions
+control_param = rospy.Subscriber("/robot/vel_control_params",
+                                           Pose2D, control_callback,  queue_size=1)
+camera_angle=rospy.Subscriber("/robot/odom",
+                                           Odometry, angle_callback,  queue_size=1)
 
 
-
-## go_to_target: function to go to a target specified by the coordinates (xtar,ytar)
-def go_to_target(xtar,ytar):
+## Function to assign the robot position via the action server
+def setPosition(x,y):
+	global client
+	pose=Pose() # initialization of the pose message
+	pose.position.x=x #assign the x component
+	pose.position.y=y #assign the y component
+	pose.position.z=0 # the z component will be switched from over to under and vice versa
+	msg=PoseStamped() # create the correct format
+	msg.pose=pose # initialize a goal object with the correct format
+	goal=exp_assignment2.msg.PlanningGoal(target_pose=msg) # initialize a goal object with the correct format
+	client.send_goal(goal) # Sends the goal to the action server.
 	
-	global x,y
-	## Control loop
-	#to avoid zero division check and to control from the current position
-	if xtar==x:
-		nx=0
-	else:
-		nx=(xtar-x)/abs(xtar-x)
-
-	if ytar==y:
-		ny=0
-	else:
-		ny=(ytar-y)/abs(ytar-y)
- 	## teleport to the nex position of the grid
-	teleportabs(x+nx,y+ny,math.atan2(ny,nx))
-	time.sleep(timer)
+	#client.wait_for_result() # wait for the result to come 
 			
 ## roam: function to simulate the roaming behaviour of normal
 def roam():
 	global x,y
 	## Command decision
-	dx=random.randint(-1,1)
-	dy=random.randint(-1,1)
-	while not (x+dx<11 and x+dx>=1):
-		dx=random.randint(-1,1)
-	while not (y+dy<11 and y+dy>=1):
-		dy=random.randint(-1,1)
-	## Application of the command
-	time.sleep(timer)
-	#rospy.loginfo(str(dx)+" "+str(dy))
-	teleportabs(x+dx,y+dy,math.atan2(dy,dx))
-
-## simcallback: callback for the simulated pet position
-def simcallback(data):
-    global x,y
-    x=data.x
-    y=data.y
-    theta=data.theta
-    rospy.set_param('position',{'x':x,'y':y,'theta':theta})
-
-
+	dx=random.randint(-8,8) # find a random point in the grid for x
+	dy=random.randint(-8,8) # find a random point in the grid for y 
+	setPosition(dx,dy)  # set the new goal position
 
 ## Sleep: class that describes the Sleep state
 class Sleep(smach.State):
@@ -101,21 +113,17 @@ class Sleep(smach.State):
 	global x,y
 	## Check if in normal or not
 	rospy.set_param('in_course',0)
-	while True:
-		## while not at home
-		xtar=rospy.get_param('home/x')
-		ytar=rospy.get_param('home/y')
-		while not((xtar-x==0) and (ytar-y==0)):
-			go_to_target(xtar,ytar)
-			## if sleep state activated
-			state=rospy.get_param('state')
-			if not state==3:
-				return 'outcome1'
-		## change state if not sleep
+	
+	## while not at home
+	xtar=rospy.get_param('home/x')
+	ytar=rospy.get_param('home/y')
+	setPosition(xtar,ytar)
+	while True: ## change state if not sleep
 		state=rospy.get_param('state')
 		if not state==3:
 			return 'outcome1'
-
+		
+		
 ## Normal: class that describes the Normal state
 class Normal(smach.State):
 
@@ -126,9 +134,16 @@ class Normal(smach.State):
 	global x,y
 	## Check if in normal or not
 	rospy.set_param('in_course',0)
+	var=1
 	while True:
-		## roam
-		roam()
+		
+		if var==1:
+			## roam
+			roam()
+			var=0
+		else:
+		     if client.get_state()==3: # the goal was achieved
+			var=1
 		## check the state
 		state=rospy.get_param('state')
   		if state==2:
@@ -143,56 +158,15 @@ class Play(smach.State):
         smach.State.__init__(self, outcomes=['outcome1','outcome2'])
 
     def execute(self, userdata):
-
+	# from the difference between the camera and chassis principal axis angle  compute an allineation 
+	# command, when the difference is zero go to the ball, when the target is achieved start the span
+	# loop
 	while True:
-		## if the command is received
-		## Extract the command
-		strings=""
-		strings=str(strings)
-		## Find if the command is empty
-		while not strings=="":
-			## if command received
-			rospy.set_param('in_course',1)
-			temp1=strings.split("|")# devide each command
-			strings=""
-			for i in range(len(temp1)):
-				## parse each command in x and y
-				temp2=temp1[i].split(" ")
-				if not(len(temp2)<2):  
-					xtar=int(temp2[0])
-					ytar=int(temp2[1])
-					#go to target
-					while not((xtar==x) and (ytar==y)):
-						go_to_target(xtar,ytar)
-						#if sleep state activates
-						state=rospy.get_param('state')
-						if state==3:
-							return 'outcome2'
-				
-				## go owner
-				xtar=rospy.get_param('owner/x')
-				ytar=rospy.get_param('owner/y')
-				while not((xtar==x) and (ytar==y)):
-					go_to_target(xtar,ytar)
-					#if sleep state activates
-					state=rospy.get_param('state')
-					if state==3:
-						return 'outcome2'
-			## Check if in normal or not
-			rospy.set_param('in_course',0)
-		## Return to the owner when all commands are executed
-		xtar=rospy.get_param('owner/x')
-		ytar=rospy.get_param('owner/y')
-		while not ((xtar==x) and (ytar==y)):
-			go_to_target(xtar,ytar)
-			# check the state
-			state=rospy.get_param('state')
-			if state==1:
-				return 'outcome1'
-			if state==3:
-				return 'outcome2'
 		## check the state
-		state=rospy.get_param('state')
+		state=rospy.get_param('state')		
+		if state==3:
+			return 'outcome2'
+		
 		if state==1:
 			return 'outcome1'
 
@@ -200,27 +174,14 @@ class Play(smach.State):
 ## Main function declaration
 
 if __name__ == '__main__':
+	global client,x_comp,y_comp,z_comp
 	## Init the ros node
 	rospy.init_node("state_machine")
 	
-	# Service to change color
-	rospy.wait_for_service('/turtle1/set_pen')
-	# Service to set the position
-	rospy.wait_for_service('/turtle1/teleport_absolute')
-	# Service to clear the path
-	#rospy.wait_for_service('/clear')
-	rospy.wait_for_service('/turtle1/teleport_absolute')
+	
+	client.wait_for_server()
 
-	# Declaration of the subscriber
-	rospy.Subscriber("/turtle1/pose",Pose,simcallback)
 	
-	# Setting up the scene
-	
-	teleportabs = rospy.ServiceProxy('/turtle1/teleport_absolute', TeleportAbsolute)
-	teleportabs(5,5,0)
-	resets=rospy.ServiceProxy('/clear',Empty)
-	
-	resets()
 
 	## Create a SMACH state machine
         sm_s_a = smach.StateMachine(outcomes=['outcome4'])

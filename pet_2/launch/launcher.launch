@@ -12,5 +12,5 @@
     <node pkg="pet_2" name="component2" type="Pet_logic.py" output="screen"/>
     <node pkg="pet_2" name="component1" type="Pet_behaviours.py" output="screen"/>
     <node pkg="pet_2" name="component3" type="Command_giver.py"/> 
- 
+    <node name="Perception" pkg="pet_2" type="robot_following.py" output="screen" />
 </launch>

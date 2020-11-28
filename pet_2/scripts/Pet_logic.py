@@ -33,12 +33,12 @@ client = actionlib.SimpleActionClient('/reaching_goal', exp_assignment2.msg.Plan
 ## coordinates component of the ball
 x_comp=0
 y_comp=0
-z_comp=1
+z_comp=-1
 
-
+## Function to assign the ball position via the action server
 def setPosition(x,y,z):
 	global client
-	pose=Pose()
+	pose=Pose() # initialization of the pose message
 	pose.position.x=x #assign the x component
 	pose.position.y=y #assign the y component
 	pose.position.z=z # the z component will be switched from over to under and vice versa
@@ -67,7 +67,12 @@ def comCallback(msg):
 			temp=tlist[i].split(" ")
 			if temp[0]=='play' and state==1 and len(temp)<3: #Play state
 				# Take the ball above the surface
-				setPosition(x_comp,y_comp,1) 
+				z_comp=1
+				setPosition(x_comp,y_comp,z_comp)
+			elif temp[0]=='hide' and not state==3 and len(temp)<3: #Play state
+				# Take the ball above the surface
+				z_comp=-1
+				setPosition(x_comp,y_comp,z_comp) 
 					
 			else: # position command
 				
@@ -97,7 +102,8 @@ if __name__ == '__main__':
 	# Loop rate
 	rate = rospy.Rate(5) # 10hz
 	# Set the position of the ball below the surface
-	setPosition(x_comp,y_comp,-1)
+	z_comp=1
+	setPosition(x_comp,y_comp,z_comp)
 	# Loop to change state randomly
 	while not rospy.is_shutdown():
 		value=random.randrange(15,45,5) #timer in which to change state (from 15 s to 1 and 1/2 min)
@@ -105,16 +111,15 @@ if __name__ == '__main__':
 		#get the current state
 		state=rospy.get_param('state')
 		# choose a random value to decide to change state
-		value=random.randrange(1,10,1)
-		if state==1: # if it is in normale choose to change to sleep
-			if value<3:
-				rospy.set_param('state',3)
-		if state==2: # if in play can only switch to sleep (play to normal in FSM)
-			value=random.randrange(1,10,1)
-			setPosition(x_comp,y_comp,-1)
-			if value<3:
-				rospy.set_param('state',3)
+		value=random.randrange(1,15,1)
+		if state==1 or state==2: # if it is in normal or play choose to change to sleep
 			
+			if value<3:
+				z_comp=-1 # temporary
+				setPosition(x_comp,y_comp,z_comp)
+				rospy.set_param('state',3)
+				
 		if state==3: # if in sleep choose to change in normal
+			
 			if value<3:
 				rospy.set_param('state',1)
