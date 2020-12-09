@@ -63,7 +63,6 @@ rob_angle=0
 ## Callbacks for the subscribers
 def control_callback(ros_data):
 	global camera_angle , radius	
-	temp=list(ros_data.position)
 	camera_angle=ros_data.theta
 	radius=ros_data.x
 
@@ -74,11 +73,11 @@ def angle_callback(ros_data):
 	rob_angle=yaw	
 
 ## Subscribers definitions
-control_param = rospy.Subscriber("/robot/vel_control_params",
+rospy.Subscriber("/robot/vel_control_params",
                                            Pose2D, control_callback,  queue_size=1)
-camera_angle=rospy.Subscriber("/robot/odom",
-                                           Odometry, angle_callback,  queue_size=1)
-
+rospy.Subscriber("/robot/odom",Odometry, angle_callback,  queue_size=1)
+vel_pub = rospy.Publisher("/robot/cmd_vel",
+                                       Twist, queue_size=1)
 
 ## Function to assign the robot position via the action server
 def setPosition(x,y):
@@ -98,8 +97,8 @@ def setPosition(x,y):
 def roam():
 	global x,y
 	## Command decision
-	dx=random.randint(-8,8) # find a random point in the grid for x
-	dy=random.randint(-8,8) # find a random point in the grid for y 
+	dx=random.randint(-7,7) # find a random point in the grid for x
+	dy=random.randint(-7,7) # find a random point in the grid for y 
 	setPosition(dx,dy)  # set the new goal position
 
 ## Sleep: class that describes the Sleep state
@@ -110,16 +109,16 @@ class Sleep(smach.State):
 	
 
     def execute(self, userdata):
-	global x,y
+	global x,y,client
 	## Check if in normal or not
-	rospy.set_param('in_course',0)
+	client.cancel_goal() # cancel previous goals
 	
 	## while not at home
-	xtar=rospy.get_param('home/x')
-	ytar=rospy.get_param('home/y')
+	xtar=rospy.get_param('/home/x')
+	ytar=rospy.get_param('/home/y')
 	setPosition(xtar,ytar)
 	while True: ## change state if not sleep
-		state=rospy.get_param('state')
+		state=rospy.get_param('/state')
 		if not state==3:
 			return 'outcome1'
 		
@@ -131,13 +130,11 @@ class Normal(smach.State):
         smach.State.__init__(self, outcomes=['outcome1','outcome2'])
 
     def execute(self, userdata):
-	global x,y
-	## Check if in normal or not
-	rospy.set_param('in_course',0)
-	var=1
+	client.cancel_goal() # cancel previous goals
+	var=1 # if you are roaming
 	while True:
 		
-		if var==1:
+		if var==1: # if to not preempt the roam goal if the pet is going there
 			## roam
 			roam()
 			var=0
@@ -145,7 +142,7 @@ class Normal(smach.State):
 		     if client.get_state()==3: # the goal was achieved
 			var=1
 		## check the state
-		state=rospy.get_param('state')
+		state=rospy.get_param('/state')
   		if state==2:
 			return 'outcome1'
 		elif state==3:
@@ -158,12 +155,24 @@ class Play(smach.State):
         smach.State.__init__(self, outcomes=['outcome1','outcome2'])
 
     def execute(self, userdata):
-	# from the difference between the camera and chassis principal axis angle  compute an allineation 
-	# command, when the difference is zero go to the ball, when the target is achieved start the span
-	# loop
+	global camera_angle , radius, rob_angle, vel_pub,client
+	client.cancel_goal() # cancel previous goals
 	while True:
+		
+		vel=Twist()
+		if radius>-0.5:
+			# logic to go closer to the ball but not close enough to flip the robot
+			if radius<=125:
+				vel.linear.x=-0.012*(radius-125)
+				if camera_angle*camera_angle>0.001:		
+					vel.angular.z=2*(camera_angle)
+			else:
+				if radius<128:
+					vel.linear.x=-0.012*(radius-128)
+			
+			vel_pub.publish(vel)
 		## check the state
-		state=rospy.get_param('state')		
+		state=rospy.get_param('/state')		
 		if state==3:
 			return 'outcome2'
 		

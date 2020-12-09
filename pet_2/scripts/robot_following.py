@@ -20,8 +20,10 @@ import math
 
 # Ros Messages
 from sensor_msgs.msg import CompressedImage,JointState
+from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Twist, Pose2D
 from std_msgs.msg import Float64
+from tf.transformations import euler_from_quaternion
 
 VERBOSE = False
 ## Initial angle definition
@@ -29,11 +31,20 @@ angle=0
 ## Threshold precision
 threshold = 0.0001
 ## Objectives for swing routine
-objectives=list([math.pi/2,0,-math.pi/2,0])
+objectives=list([math.pi/4,0,-math.pi/4,0])
 #index of the swing routine
 index=0
 ## Dimension of the proximity radius
-max_rad=160
+max_rad=125
+## robot angle
+rob_angle=0
+## robot vel
+rob_vel=0
+# search activators
+rotated=0
+half_rot=0
+last_vel=0
+last_ang=0
 
 ## callback function to update the angle position
 def angle_callback(ros_data):
@@ -42,7 +53,12 @@ def angle_callback(ros_data):
 	angle=temp[0]
 
 
-	
+def rob_callback(ros_data):
+	global rob_angle,rob_vel
+	temp=ros_data.pose.pose.orientation
+	(roll, pitch, yaw) = euler_from_quaternion ([temp.x, temp.y, temp.z, temp.w])
+	rob_angle=yaw
+	rob_vel=ros_data.twist.twist.linear.x
 
 ## Image feature class to handle feature identification inside the image sent by the camera
 class image_feature:
@@ -57,15 +73,18 @@ class image_feature:
                                        Float64, queue_size=1)
 	self.par_pub = rospy.Publisher("/robot/vel_control_params",
                                        Pose2D, queue_size=1)
-	
+	self.rob_pub = rospy.Publisher("/robot/cmd_vel",
+                                       Twist, queue_size=1)
         # subscribed Topic
         self.subscriber = rospy.Subscriber("/robot/camera1/image_raw/compressed",
                                            CompressedImage, self.callback,  queue_size=1)
 	self.camera_angle=rospy.Subscriber("/robot/joint_states",
                                            JointState, angle_callback,  queue_size=1)
+	rospy.Subscriber("/robot/odom", Odometry, rob_callback,  queue_size=1)
+
     def callback(self, ros_data):
 
-	global threshold , objectives , angle , index
+	global threshold , objectives , angle , index, rob_vel, rotated, half_rot,last_vel, last_ang
         '''Callback function of subscribed topic. 
         Here images get converted and features detected'''
         if VERBOSE:
@@ -109,29 +128,52 @@ class image_feature:
             if radius > 10 and radius <= max_rad:
 		index=0 # a new observation of the ball
 		# if the state is not 'play' set it to 'play'
-		#if not rospy.get_param('state')==2:
-			#rospy.set_param('state',2)
+		if not rospy.get_param('/state')==2:
+			rospy.set_param('/state',2)
                 # draw the circle and centroid on the frame,
                 # then update the list of tracked points
                 cv2.circle(image_np, (int(x), int(y)), int(radius),
                            (0, 255, 255), 2)
                 cv2.circle(image_np, center, 5, (0, 0, 255), -1)
-                vel=-0.002*(center[0]-400) # center the ball in the image 
+                vel=-0.02*(center[0]-400) # center the ball in the image 
                 self.vel_pub.publish(vel) # publish the velocity to the camera
-            elif radius >max_rad and index<5: # if close enough to the ball start the swing routine
+            elif radius*radius>3*max_rad*max_rad/4 and rob_vel*rob_vel<0.01 and not index==4: # if close enough to the ball start the swing routine
 		cv2.circle(image_np, (int(x), int(y)), int(radius),
                            (0, 255, 255), 2)
                 cv2.circle(image_np, center, 5, (0, 0, 255), -1)
-		vel=-0.002*(angle-objectives[index]) # publish the velocity to the camera
+		vel=-2*(angle-objectives[index]) # publish the velocity to the camera
 		self.vel_pub.publish(vel) # publish the velocity to the camera
 		if (angle-objectives[index])*(angle-objectives[index])<0.001 : 
 			index+=1 # if sufficiently close to the objective update the index
+							
 	    else: # the c
 		vel=-0.5*angle # center the camera to zero
 		self.vel_pub.publish(vel) # publish the velocity to the camera
 		    
-	
+	    last_vel=vel # last camera velocity(for when you do not see the ball)
+	    last_ang=rob_angle # last robot angle
+	    rotated=0 # you haven't completed a search rotation
+	    half_rot=0 # you haven't comleted an half rotation
         else: # if the ball is not observed
+	    if rospy.get_param('/state')==2: # and you are in play
+			msg=Pose2D()
+	    		msg.x=-0.5
+	    		msg.theta=-0.5
+	    		self.par_pub.publish(msg)
+			 # search for the ball rotating on the spot
+			if rotated==0: # while you have not completed a search revolution
+				vel=Twist()
+				vel.angular.z=np.sign(last_vel)*1
+				self.rob_pub.publish(vel)
+				if half_rot==0 and (rob_angle-last_ang)*(rob_angle-last_ang)>0.01: # if you have not yet got far from the first point
+					half_rot=1
+				elif half_rot==0 and (rob_angle-last_ang)*(rob_angle-last_ang)>0.1: # if you have completed half rotation you just have to repeat to come back to the original angle
+				        rotated=1 # you have complete the entire rotation
+					half_rot=0
+					
+			else: # if the search has failed go to Normal state
+				rospy.set_param('/state',1) 
+				rotated=0
 	    vel=-0.5*(angle) # take the angle to 0
 	    self.vel_pub.publish(vel) # publish the velocity to the camera
 	    	

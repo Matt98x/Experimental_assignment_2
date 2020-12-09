@@ -144,15 +144,14 @@
 	      </material>
 	    </visual>
 	    <inertial>
-	      <mass value="1e-5" />
+	      <mass value="2" />
 	      <origin xyz="0 0 0" rpy="0 0 0"/>
-	      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+	      <inertia ixx="1e-4" ixy="0" ixz="0" iyy="1e-4" iyz="0" izz="1e-5" />
 	    </inertial> 
   </link>
   
-  <joint name="neck_joint" type="revolute">
+  <joint name="neck_joint" type="fixed">
 	    <axis xyz="0 0 1" />
-	    <limit effort="1000.0" lower="-1.8" upper="1.8" velocity="0.5"/>
 	    <origin xyz="0.15 0 0.035" rpy="0 0 0"/>
 	    <parent link="link_chassis"/>
 	    <child link="neck_link"/> 
@@ -181,17 +180,18 @@
 	    </inertial> 
   </link>
   
-  <joint name="camera_joint" type="fixed">
-	    <axis xyz="1 0 0" />
+  <joint name="camera_joint" type="revolute">
+	    <axis xyz="0 0 1" />
+	    <limit effort="1000.0" lower="-1.8" upper="1.8" velocity="0.5"/>
 	    <origin xyz="0.025 0 0.30" rpy="0 0 0"/>
 	    <parent link="neck_link"/>
 	    <child link="camera_link"/> 
 	 </joint>
 
 
-<transmission name="neck_joint_trans">
+<transmission name="camera_joint_trans">
 	<type>transmission_interface/SimpleTransmission</type>
-	<joint name="neck_joint">
+	<joint name="camera_joint">
 		<hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
 	</joint>
 	<actuator name="motor1">

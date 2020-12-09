@@ -33,8 +33,10 @@ if __name__ == '__main__':
 		## Concatenate a lis t of commands
 		for i in range(leng):
 			value=random.randrange(1,10,1)
-			if value<2:
+			if value<3:
 				strings+="play"	
+			elif value>=3 and value<4:
+				strings+="hide"
 			else:
 				## choose a target inside the map
 				xtar=random.randrange(-8,8,1)

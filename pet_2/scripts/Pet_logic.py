@@ -69,7 +69,7 @@ def comCallback(msg):
 				# Take the ball above the surface
 				z_comp=1
 				setPosition(x_comp,y_comp,z_comp)
-			elif temp[0]=='hide' and not state==3 and len(temp)<3: #Play state
+			elif temp[0]=='hide' and len(temp)<3: #Play state
 				# Take the ball above the surface
 				z_comp=-1
 				setPosition(x_comp,y_comp,z_comp) 

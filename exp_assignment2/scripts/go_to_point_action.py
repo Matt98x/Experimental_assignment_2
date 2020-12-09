@@ -25,8 +25,8 @@ yaw_precision_2_ = math.pi / 90 # +/- 2 degree allowed
 dist_precision_ = 0.1
 kp_a = 3.0
 kp_d = 0.2
-ub_a = 0.6
-lb_a = -0.5
+ub_a = 0.9
+lb_a = -0.9
 ub_d = 0.6
 
 # publisher
