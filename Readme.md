@@ -11,13 +11,18 @@ The pet has three states representing behaviours, that are simulated as a finite
 * Sleep 
 * Normal  
   
-These states determine the way the robot act inside the grid, whether moving randomly as in normal, going to targets determined by the user or simply sleeping in the home position.  
+These states determine the way the robot act inside the grid, whether moving randomly as in normal, going to targets determined by the position of a ball guided by the human or simply sleeping in the home position.  
 
-The robot will change between states randomly, eccept for play, which is received by the user.  
+The robot will change between states randomly, eccept for play, which is received by the user, by imposing a positive height with respect to the ground.  
 
-## Software Architecture
+## Software Architecture, State Machine and communications
 
-The software architecture consists in a pipeline, starting from the command generation and arriving to the pet simulation in turtlesim.  
+### Architecture
+The software architecture consists of two main areas: the world and the pet, programmatically represented by the two packages that compose this implementation.  
+The first handle how the world is organized and works externally to the pet. This means that the commander, the Pet-logic(now simply interpretable as Logic) and the movement of the ball can ba all thought to be component of this macro-architecture.  
+Going to the Pet, this can be considered as connected to the world over just two aspect:  
+* The Perception: that handles how the pet perceives the world and in particular the ball
+* The Logic: which is simply a remaining part from the first assignment, in which this node controlled both the command interpretation and the control of the robot state.  
 Here we show the architecture image:  
 <p align="center">
   <img src="https://github.com/Matt98x/Experimental_assignment1/blob/main/Images/Components_diagram.PNG?raw=true "Title"">
@@ -25,18 +30,15 @@ Here we show the architecture image:
 <p align="center">
   Component Diagram
 </p>
-The main components are:  
 
-* Random command generator(Command_giver.py)- send a string representing the concatenation of one or more commands of the form: 'play'(to start the play state),'point to x y'(to simulate the pointing gesture to x y),'go to x y'(to simulate the voice command to x y)
-* Pet Interpreter(Pet_logic.py)- to interpret the string commands and translate them to a command list
+Going in depth of the components, we have:  
+* Random command generator(Command_giver.py)- randomically send a string representing the concatenation of one or more commands of the form: 'play'(to start the play state),'point to x y'(to simulate the pointing gesture to x y),'go to x y'(to simulate the voice command to x y) and 'hide'(to stop the play state without entering the sleep state)
+* Interpreter(Pet_logic.py)- to interpret the string commands and translate them to movement of the ball, moreover, it handles the switch from play and normal to sleep and from sleep to normal
 * Pet behaviours(Pet_behaviours.py)- that simulate behaviours as a finite state, in the already mentioned states
-* Turtle simulation- that represents the position of the robot in the map
-* User- may or may not be present and provides the same type of messages that the Command_giver provides, adding also symbolical location such as "home" and "owner"
+* Perception(robot_following.py): which is the node that handles the camera inputs(target identification and research) and the hardware control for these tasks(control of the neck joint(target tracking) and body(target search) ) 
+* User- may or may not be present and provides the same type of messages that the Command_giver provides, adding also symbolical location such as "home" and "owner", moreover can query or set the state of the robot and interact with the parameters.  
 
-Starting from the Command_giver, it is a publisher, with String type message, that transmit a series of 1 to 5 commands as the one discussed with a conjunction of an "and".
-
-Talking about the Pet interpreter, this component subscribes to the command generator topic and provides a service with share the value of the command string composed by integers and devided by the '|' character.
-
+### State Machine
 Now, we can discuss the finite state machine. This, can be described by the following image:
 
 <p align="center">
@@ -45,14 +47,40 @@ Now, we can discuss the finite state machine. This, can be described by the foll
 <p align="center">
   Finite state machine diagram
 </p>
-While the 'Sleep' and 'Normal' state are quite simple in nature (containing just an infinite loop to sleep and to roam respectively), the 'Play' state is quite more complex in nature, having the following structure:
-<p align="center">
-  <img src="https://github.com/Matt98x/Experimental_assignment1/blob/main/Images/Play_behaviour_flowchart.PNG?raw=true "Title"">
-</p>
-<p align="center">
-  Play behaviour flowchart
-</p>
-And finally the simulator node, which was not implemented by the outhors, but is the GUI that demonstrate the position of the robot during the pet activity.
+The Normal state is the simplest in nature of the three states, it simply consist of a loop of setting random destinations inside the grid without other interventions while the targets are not achieved.  
+On the other hand, the sleep consist in setting the target to 'home' (set in the parameter server), and, when the position is achieved, just wait ignoring all signals exept for the change of state.
+While the 'Sleep' and 'Normal' state are quite simple in nature, the 'Play' state is quite more complex in nature.
+Of course, having to consider the position of the ball without having it, we have to construct a control with the few notions we have: the relative radius of the ball and the angle of the neck with respect to the principal axis of the chassis(that is the principal axis of the robot).  
+With this, the algorith is to first minimize the angular offset of the neck w.r.t. the body rotating the body itself and then set a linear velocity while you receive the two data from the Perception node.  
+Obviously, while this process is happening, the state is checked and change if the change conditions are satisfied.  
+Although this is the part of the state explicitely coded in the finite state machine, an additional part is present inside the Perception node and is related to how the target is handled and searched.  
+When the target is achieved, the robot proceeds to what has been defined as "swing routine", in which it moves the neck 45° to the left and to the right before centering back again to the target.  
+When, eventually, the robot loose sight of the ball (always inside the perception code), the robot align the camera to the body and start spinning in the same direction of the last velocity of the body(right if the velocity was to be zero), to try and find it back again, if it cannot manage it, it will switch to the normal state.  
+
+### Messages and parameters
+
+
+
+## Packages and file list
+
+As already said, the implementation is based on two packages: exp_assignment2 and pet_2.  
+The first handle the simulation of the environment and the movements of the elements in it. In particular, it contains the world, robot and ball description, with the additional control parameters and related topics.  
+The script present in this package are just 2:  
+* go_to_point_action.py: action server to handle the movement of the robot to a specified target
+* go_to_point_ball.py: action server to move the ball to a specified target
+Going over to the pet_2 package, this handles the pet from perception to behaviours, plus the ball movement:  
+* Command_giver.py: randomically generate command for the ball to follow
+* Pet_logic: receives the commands from the command_giver and convert them to movements of the ball, apart from changing the state from play and normal to sleep and sleep to normal.
+* Pet_behaviours.py: is the implementation of the finite state machine, or at least, the entirety of the sleep and normal phase and the control part of the play state
+* robot_following.py: implement the perception part of the robot(in particular the vision), and handles the control of the neck joint, the swing routine and the switch from normal to play and vice versa
+
+This were the scripts which are at the core of this implementation, but, at the side, there are other scripts.  
+Starting from exp_assignment2:
+* gazebo_world.launch: inside the "launch" folder: handles the definition of the simulation environment and of the elements inside it, and the controller for them.
+* The urdf folder contains the xacro and gazebo description of the ball and robot
+* the config folder containing the motor_config.yaml, with the controller description
+* Planning.action is the message of the action server
+* Finally the world folder contains the world description  
 
 ## Installation and running procedure
 

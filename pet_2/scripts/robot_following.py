@@ -42,7 +42,7 @@ rob_angle=0
 rob_vel=0
 # search activators
 rotated=0
-half_rot=0
+half_rot=2*math.pi
 last_vel=0
 last_ang=0
 
@@ -153,7 +153,7 @@ class image_feature:
 	    last_vel=vel # last camera velocity(for when you do not see the ball)
 	    last_ang=rob_angle # last robot angle
 	    rotated=0 # you haven't completed a search rotation
-	    half_rot=0 # you haven't comleted an half rotation
+	    half_rot=2*math.pi # you haven't comleted an half rotation
         else: # if the ball is not observed
 	    if rospy.get_param('/state')==2: # and you are in play
 			msg=Pose2D()
@@ -163,13 +163,13 @@ class image_feature:
 			 # search for the ball rotating on the spot
 			if rotated==0: # while you have not completed a search revolution
 				vel=Twist()
-				vel.angular.z=np.sign(last_vel)*1
+				vel.angular.z=np.sign(last_vel)*2
+				da=np.sign(rob_angle-last_ang)*(rob_angle-last_ang) # compute the spanned angle
+				last_ang=rob_angle
+				half_rot=half_rot-da
+				if half_rot<0 :
+					rotated=1
 				self.rob_pub.publish(vel)
-				if half_rot==0 and (rob_angle-last_ang)*(rob_angle-last_ang)>0.01: # if you have not yet got far from the first point
-					half_rot=1
-				elif half_rot==0 and (rob_angle-last_ang)*(rob_angle-last_ang)>0.1: # if you have completed half rotation you just have to repeat to come back to the original angle
-				        rotated=1 # you have complete the entire rotation
-					half_rot=0
 					
 			else: # if the search has failed go to Normal state
 				rospy.set_param('/state',1) 
