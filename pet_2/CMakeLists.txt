@@ -170,11 +170,10 @@ include_directories(
 
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
-# install(PROGRAMS
-#   scripts/my_python_script
-#   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
-
+ install(PROGRAMS
+   scripts/Command_giver.py stripts/Pet_behaviours.py scripts/Pet_logic.py scripts/robot_following.py
+   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+ )
  
 
 ## Mark executables and/or libraries for installation

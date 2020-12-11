@@ -1,4 +1,4 @@
-# Experimental robotic assignment 1
+# Experimental robotic assignment 2
 
 <a href="http://htmlpreview.github.io/?https://github.com/Matt98x/Experimental_assignment1/blob/main/pet_package/html/index.html" title="Documentation">Documentation</a>
 
@@ -110,71 +110,91 @@ Starting from exp_assignment2:
 
 ## Installation and running procedure
 
+### Installation
+
 * Download the package from the github repository
 * Set the package in the src folder of the catkin workspace
-* With the shell, get into the folder and run 
- ```sh
-	chmod +x launcher.sh
- ```
-* Write 
+* Go to the main folder of the catkin workspace and launch
 ```sh
-	./launcher.sh
+	.catkin_make
  ```
-* You can look at the blue-background screen to obtain the graphical representation of the robot location, while, on the shell, the state transition and the command from the command menager are displayed
+### Running
+
+* After the compiler has completed its task we can use the same shell to launch the simulation environment.
+```sh
+	roslauch exp_assignment2 gazebo_world.launch
+ ```
+* On a differrent shell we can launch the pet control
+```sh
+	roslauch pet_2 launcher.launch
+ ```
+* Now the implementation is up and running
+* One can observe the world and ball behaviour in the first shell, on the other there shell there is the robot states, and whether the target is achieved
+
+### User commands
+
+While there is the Command_giver to generate random commands, a human user can interface with the implementation, giving command using the following command.  
 * To write a command:
 ```sh
 	rostopic pub /commander std_msgs/String "data: ''" 
  ```
-where, in place of '', you can put any commands as presented before
+where, in place of '', you can put any commands as presented before.  
+* Moreover, one can set the state(play(2),normal(1) and sleep(0)), writing:
+```sh
+	rosparam /state state_code 
+ ```
+state_code is to be substitute with one of the integer code stated
 
 
 ## Working assumptions
 
 The working assumptions will be discussed as the following list:
-* The robot, simulating a pet, interact with a human and moves in a discrete 2D environment.
-* Both the robot targets and its positions belongs exclusively to the map(11 by 11 grid)representing the 2D environment.
+* The robot, simulating a pet, interact with a human with a ball moving in the environment and moves in a 2D surface in a simulation environment.
+* Both the robot targets and its positions belongs exclusively to the map(16 by 16 grid with center in (0,0))representing the 2D environment.
 * The robot has 3 main states:
 	- Play
 	- Normal
 	- Sleep
-* The robot receive forms in strings with possible form:
-	- "play"	
+* The logic receive forms in strings with possible form:
+	- "play"
+	- "hide"	
 	- "go to x1 y1" (equivalent to voice command)
 	- "point to x1 y1" (equivalent to pointing commands)
-	- combination of commands with conjuctions of "and":
-		- All the command after the play are executed
-		- if a "play" is not in first place, only commands after the "play" command are executed
-* The robot can receive any command while executing one in Play state but the ones given are neither executed nor stored.
-* The robot can receive any command while in sleep state but the ones given are neither executed nor stored.
-* Sleep preempt any other state when it starts.
-* From Sleep you can only transition to Normal.
-* The only command that can be received in Normal is "play".
+* Once logic receives the message it applies it to the ball
+* if the command is "play", the ball is positioned above ground, if "hide", it is positioned below the ground  .
+* The robot activates the play mode only when the robot perceives the ball.
+* When the ball is percieved the robot tries to get to it
+* When achieved the "swing routine" is initialized, for which the neck is first angled to pi/4 and then too -pi/4 and then back to center
+* If the ball is not in sight anymore, the robot procede to a full rotation to find if the ball is still in the environment, if not, it switch to the normal state..
 * Two predifined positions inside the map are "Owner" and "Home", which cannot be changed during the execution, and can be used instead of coordinates in giving commands.
 
 ## System features and limitations
 
 Starting from the limitations:
-* The system is not scalable in the number of type of commands
+* The system is not scalable in the number of individually controllable robots, but if all robots have the same state, it is scalable, even if collision between robots are not handled
 * It is not scalable in the number of symbolic locations
 * It is not really scalable in the number of states
-* Does not provide a complete graphical interface, as the grid is not visible
-* The simulation is not modifiable as it was out-sourced
-* Does not distinguish between the pointing action and the vocal command
+* Does not distinguish between the pointing action and the vocal command, since the ball act
+* The robot control is not too responsive, since the control can't have a too high gain to avoid instability and the robot toppling over.
+* The movement speed is high but make a trade-off for instability
+* There are some problems with the target reaching when it is on the side of the robot especially when really close to the chassis(It cannot handle small curvature radii and the robot tends to run in circles around the target)
+* Underline jittering in the motors, observable when control is not yet active
 
-Going on to the feature:
-* Understand both integer and symbolic location, provided they are of the predefined nature
-* Can show the location of the robot in the map, provide, via shell, the state transition and the commands generated by the command generator
-* Can take any number of commands, even if the execution cannot be stopped if not by the random intervention by Pet_logic.py
+Going on to the features:
+* The robot is controlled in almost its entirety by the pet package, which means a high scalability and modularity
+* We have the robot perspective in a separate window 
+* Can show the location of the robot in the map
+* The robot can check the state without being stuck in an action server loop
 
 
 ## Possible technical improvements
 
 There are many possible technical improvements to this architecture:
-* Modify the simulation component to make it more scalable
-* Modify the interpreter to broaden the symbolic targets( to do it, the method is to setup a search in the parameters server to extract the coordinates related to the string)
-* Create a more comprehensive propositional logic, adding an 'or' conjunction to make the system more intelligent
-* Add other states to the state machine, which implies also a modification of the Pet_logic.py
-* Make distinction between the pointing action and the vocal command
+* Modify the simulation component to make it more scalable, introducing the state change from and to sleep inside the pet_package
+* Improve the control, of both the camera and the robot chassis in such a way to perform both linear and angular velocities, and in a way that the robot do not topple over
+* Handle the situation when the ball is close to the side of the robot, in order to have it centered inside the robot perspective
+* Add a way to avoid collisions with other obstacles, with the possible introduction of a proximity sensor of some sort
+* Add multiple robots to the simulation
 
 ## Author and contacts
 Matteo Palmas: matteo.palmas7gmail.com
