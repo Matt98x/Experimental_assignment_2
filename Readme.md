@@ -25,18 +25,29 @@ Going to the Pet, this can be considered as connected to the world over just two
 * The Logic: which is simply a remaining part from the first assignment, in which this node controlled both the command interpretation and the control of the robot state.  
 Here we show the architecture image:  
 <p align="center">
-  <img src="https://github.com/Matt98x/Experimental_assignment1/blob/main/Images/Components_diagram.PNG?raw=true "Title"">
+  <img src="https://github.com/Matt98x/Experimental_assignment_2/blob/main/Images/Component_diagrams.PNG?raw=true "Title"">
 </p>
 <p align="center">
   Component Diagram
 </p>
 
 Going in depth of the components, we have:  
-* Random command generator(Command_giver.py)- randomically send a string representing the concatenation of one or more commands of the form: 'play'(to start the play state),'point to x y'(to simulate the pointing gesture to x y),'go to x y'(to simulate the voice command to x y) and 'hide'(to stop the play state without entering the sleep state)
-* Interpreter(Pet_logic.py)- to interpret the string commands and translate them to movement of the ball, moreover, it handles the switch from play and normal to sleep and from sleep to normal
+* Random command generator(Command_giver.py): randomically send a string representing the concatenation of one or more commands of the form: 'play'(to start the play state),'point to x y'(to simulate the pointing gesture to x y),'go to x y'(to simulate the voice command to x y) and 'hide'(to stop the play state without entering the sleep state)
+* Interpreter(Pet_logic.py): to interpret the string commands and translate them to movement of the ball, moreover, it handles the switch from play and normal to sleep and from sleep to normal
 * Pet behaviours(Pet_behaviours.py)- that simulate behaviours as a finite state, in the already mentioned states
 * Perception(robot_following.py): which is the node that handles the camera inputs(target identification and research) and the hardware control for these tasks(control of the neck joint(target tracking) and body(target search) ) 
-* User- may or may not be present and provides the same type of messages that the Command_giver provides, adding also symbolical location such as "home" and "owner", moreover can query or set the state of the robot and interact with the parameters.  
+* Actor: may or may not be present and provides the same type of messages that the Command_giver provides, adding also symbolical location such as "home" and "owner", moreover can query or set the state of the robot and interact with the parameters.
+* Ball: representation of the logic controlling the ball
+* Robot Control: representation of the low-level control of the ball
+* Gazebo: although not a logic part of the component diagram, it represent the way ball, robot control and perception are fundamentally part of the simulation and communicate with it
+
+Here we can see how these last three elements communicates with the Gazebo simulation environment:  
+<p align="center">
+  <img src="https://github.com/Matt98x/Experimental_assignment1/blob/main/Images/Components_diagram.PNG?raw=true "Title"">
+</p>
+<p align="center">
+  Component Diagram
+</p>
 
 ### State Machine
 Now, we can discuss the finite state machine. This, can be described by the following image:
@@ -189,12 +200,12 @@ Going on to the features:
 
 ## Possible technical improvements
 
-There are many possible technical improvements to this architecture:
+There are many possible technical improvements to this architecture:  
 * Modify the simulation component to make it more scalable, introducing the state change from and to sleep inside the pet_package
 * Improve the control, of both the camera and the robot chassis in such a way to perform both linear and angular velocities, and in a way that the robot do not topple over
 * Handle the situation when the ball is close to the side of the robot, in order to have it centered inside the robot perspective
 * Add a way to avoid collisions with other obstacles, with the possible introduction of a proximity sensor of some sort
-* Add multiple robots to the simulation
+* Add multiple robots to the simulation  
 
 ## Author and contacts
 Matteo Palmas: matteo.palmas7gmail.com
