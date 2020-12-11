@@ -55,7 +55,7 @@ While the 'Sleep' and 'Normal' state are quite simple in nature, the 'Play' stat
 
 Of course, having to consider the position of the ball without having it, we have to construct a control with the few notions we have: the relative radius of the ball and the angle of the neck with respect to the principal axis of the chassis(that is the principal axis of the robot).  
 
-With this, the algorith is to first minimize the angular offset of the neck w.r.t. the body rotating the body itself and then set a linear velocity while you receive the two data from the Perception node.  
+With this, the algorithm is to first minimize the angular offset of the neck w.r.t. the body rotating the body itself and then set a linear velocity while you receive the two data from the Perception node.  
 
 Obviously, while this process is happening, the state is checked and change if the change conditions are satisfied.  
 
@@ -67,7 +67,25 @@ When, eventually, the robot loose sight of the ball (always inside the perceptio
 
 ### Messages and parameters
 
+The main parameters used for this implementation are:  
+* ball/ball_description: the gazebo description of the ball
+* /home x&y: coordinates of the home, location where the pet sleeps
+* /human_description: gazebo description of the human model
+* /robot/camera1: set of parameters of the camera sensor
+* /robot/joint1_position_controller: parameters for the neck joint
+* /robot/joint_state_controller: parameters for the robot
+* /robot/robot_description: gazebo robot description
+* /state: state of the pet(play, normal, sleep)
+* /gazebo: gazebo anvironment parameters  
 
+Regarding the messages, they will be listed as  
+* std_msgs.String: used by the commander to the logic, in order to send the command for the ball
+* std_msgs.Float64: used by the Perception and Behavious to control the neck joint
+* geometry_msgs:Pose2D: used by Perception to send the radius and camera angle for the control in the play behaviour 
+* geometry_msgs:Twist: used by Behaviours and Following to Gazebo in order to control the twist of the robot
+* sensor_msgs:JointStates: Used to read the values of the robot states
+* sensor_msgs:Image: Message with the image camera information
+* exp_assignment.PlanningAction: message of the action server, it is used by the Pet_logic and Behaviour to use the action server of the ball and robot respectively
 
 ## Packages and file list
 
