@@ -41,9 +41,9 @@ Going in depth of the components, we have:
 * Robot Control: representation of the low-level control of the ball
 * Gazebo: although not a logic part of the component diagram, it represent the way ball, robot control and perception are fundamentally part of the simulation and communicate with it
 
-Here we can see how these last three elements communicates with the Gazebo simulation environment:  
+Here we can see how these elements communicate between themselves and with the Gazebo simulation environment:  
 <p align="center">
-  <img src="https://github.com/Matt98x/Experimental_assignment1/blob/main/Images/Components_diagram.PNG?raw=true "Title"">
+  <img src="https://github.com/Matt98x/Experimental_assignment_2/blob/main/Images/rqt_graph.PNG?raw=true "Title"">
 </p>
 <p align="center">
   Component Diagram
