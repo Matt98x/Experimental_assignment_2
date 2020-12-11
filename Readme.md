@@ -48,13 +48,21 @@ Now, we can discuss the finite state machine. This, can be described by the foll
   Finite state machine diagram
 </p>
 The Normal state is the simplest in nature of the three states, it simply consist of a loop of setting random destinations inside the grid without other interventions while the targets are not achieved.  
-On the other hand, the sleep consist in setting the target to 'home' (set in the parameter server), and, when the position is achieved, just wait ignoring all signals exept for the change of state.
+
+On the other hand, the sleep consist in setting the target to 'home' (set in the parameter server), and, when the position is achieved, just wait ignoring all signals exept for the change of state.  
+
 While the 'Sleep' and 'Normal' state are quite simple in nature, the 'Play' state is quite more complex in nature.  
+
 Of course, having to consider the position of the ball without having it, we have to construct a control with the few notions we have: the relative radius of the ball and the angle of the neck with respect to the principal axis of the chassis(that is the principal axis of the robot).  
+
 With this, the algorith is to first minimize the angular offset of the neck w.r.t. the body rotating the body itself and then set a linear velocity while you receive the two data from the Perception node.  
+
 Obviously, while this process is happening, the state is checked and change if the change conditions are satisfied.  
+
 Although this is the part of the state explicitely coded in the finite state machine, an additional part is present inside the Perception node and is related to how the target is handled and searched.  
+
 When the target is achieved, the robot proceeds to what has been defined as "swing routine", in which it moves the neck 45° to the left and to the right before centering back again to the target.  
+
 When, eventually, the robot loose sight of the ball (always inside the perception code), the robot align the camera to the body and start spinning in the same direction of the last velocity of the body(right if the velocity was to be zero), to try and find it back again, if it cannot manage it, it will switch to the normal state.  
 
 ### Messages and parameters
