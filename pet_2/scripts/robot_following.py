@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 
+## @file robot_following.py
+# @brief Perception algorithm which handles the ball tracking and the swing routine
+#
+# Details: This node implements the perception algorithm to track the ball from images received from the simulation environment
+#
+
 # Python libs
 import sys
 import time
