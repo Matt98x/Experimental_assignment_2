@@ -47,12 +47,9 @@ Here we can see how these elements communicate between themselves and with the G
 ### State Machine
 Now, we can discuss the finite state machine. This, can be described by the following image:
 
-<p align="center">
-  <img src="https://github.com/Matt98x/Experimental_assignment1/blob/main/Images/Finite_state_machines.PNG?raw=true "Title"">
-</p>
-<p align="center">
-  Finite state machine diagram
-</p>
+
+Image  
+
 The Normal state is the simplest in nature of the three states, it simply consist of a loop of setting random destinations inside the grid without other interventions while the targets are not achieved.  
 
 On the other hand, the sleep consist in setting the target to 'home' (set in the parameter server), and, when the position is achieved, just wait ignoring all signals exept for the change of state.  
