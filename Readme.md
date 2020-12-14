@@ -13,8 +13,23 @@ The pet has three states representing behaviours, that are simulated as a finite
   
 These states determine the way the robot act inside the grid, whether moving randomly as in normal, going to targets determined by the position of a ball guided by the human or simply sleeping in the home position.  
 
-The robot will change between states randomly, eccept for play, which is received by the user, by imposing a positive height with respect to the ground.  
+The robot will change between states randomly, eccept for play, which is received by the user indirectly: by imposing a positive height with respect to the ground to the ball which can now be seen by the robot and activate the play routine.  
 
+With respect to the first assignment, with the new simulation environment, both the world and the pet have been modified:
+* The pet has is composed by a 2 weeled robot, with balance handled by a sphere(spherical wheel), a long neck in the front and a rgb camera which can oscillate by 90° in both directions, resembling a stylized dog. The movement is handled by a differential drive.
+<p align="center">
+  <img src="https://github.com/Matt98x/Experimental_assignment_2/blob/main/Images/pet.PNG?raw=true "Title"">
+</p>
+<p align="center">
+  Pet
+</p>
+* The pet world is a delimited planar surface of dimension 16x16 with center at 0x0, the only objects inside the map are the user(a person sitted on a chair), the ball(a green sphere) and the pet, there can be no obstacles between the robot and the ball, which means that obstacle avoidance algorithms are not required.
+<p align="center">
+  <img src="https://github.com/Matt98x/Experimental_assignment_2/blob/main/Images/world.PNG?raw=true "Title"">
+</p>
+<p align="center">
+  World
+</p>
 ## Software Architecture, State Machine and communications
 
 ### Architecture
@@ -46,18 +61,19 @@ Here we can see how these elements communicate between themselves and with the G
   <img src="https://github.com/Matt98x/Experimental_assignment_2/blob/main/Images/rqt_graph.PNG?raw=true "Title"">
 </p>
 <p align="center">
-  Component Diagram
+  RQT graph of the implementation
 </p>
 
 ### State Machine
 Now, we can discuss the finite state machine. This, can be described by the following image:
 
 <p align="center">
-  <img src="https://github.com/Matt98x/Experimental_assignment1/blob/main/Images/Finite_state_machines.PNG?raw=true "Title"">
+  <img src="https://github.com/Matt98x/Experimental_assignment_2/blob/main/Images/general_state_machine.PNG?raw=true "Title"">
 </p>
 <p align="center">
   Finite state machine diagram
 </p>
+
 The Normal state is the simplest in nature of the three states, it simply consist of a loop of setting random destinations inside the grid without other interventions while the targets are not achieved.  
 
 On the other hand, the sleep consist in setting the target to 'home' (set in the parameter server), and, when the position is achieved, just wait ignoring all signals exept for the change of state.  
@@ -99,6 +115,47 @@ Regarding the messages, they will be listed as
 * exp_assignment.PlanningAction: message of the action server, it is used by the Pet_logic and Behaviour to use the action server of the ball and robot respectively
 
 ## Packages and file list
+```sh
+Experimental_assignment_2
+   Lexp_assignment2
+   |   L__ action
+   |   |   L__ Planning.action
+   |   L__ CMakeLists.txt
+   |   L__ config
+   |   |   L__ motors_config.yaml
+   |   L__ launch
+   |   |   L__ gazebo_world.launch
+   |   L__ package.xml
+   |   L__ scripts
+   |   |   L__ go_to_point_action.py
+   |   |   L__ go_to_point_ball.py
+   |   L__ urdf
+   |   |   L__ ball.gazebo
+   |   |   L__ ball.xacro
+   |   |   L__ human.urdf
+   |   |   L__ robot.gazebo
+   |   |   L__ robot.xacro
+   |   L__ worlds
+   |       L__ world_assignment.world
+   Lpet_2
+   |   L__ CMakeLists.txt
+   |   L__ launch
+   |   |   L__ launcher.launch
+   |   L__ package.xml
+   |   L__ scripts
+   |       L__Command_giver.py
+   |       L__Pet_logic.py
+   |       L__Pet_behaviours.py
+   |       L__state_outfit_simulation_node.py
+   LImages
+   Lhtml
+   |   LSearch
+   |   |   L....
+   |   ...
+   LReadme.md
+   LReadme1.md
+```
+
 
 As already said, the implementation is based on two packages: exp_assignment2 and pet_2.  
 The first handle the simulation of the environment and the movements of the elements in it. In particular, it contains the world, robot and ball description, with the additional control parameters and related topics.  

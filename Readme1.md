@@ -1,5 +1,5 @@
-
 # Experimental robotic assignment 2
+
 
 ## Introduction
 
@@ -12,30 +12,39 @@ The pet has three states representing behaviours, that are simulated as a finite
   
 These states determine the way the robot act inside the grid, whether moving randomly as in normal, going to targets determined by the position of a ball guided by the human or simply sleeping in the home position.  
 
-The robot will change between states randomly, eccept for play, which is received by the user, by imposing a positive height with respect to the ground.  
+The robot will change between states randomly, eccept for play, which is received by the user indirectly: by imposing a positive height with respect to the ground to the ball which can now be seen by the robot and activate the play routine.  
+
+With respect to the first assignment, with the new simulation environment, both the world and the pet have been modified:
+* The pet has is composed by a 2 weeled robot, with balance handled by a sphere(spherical wheel), a long neck in the front and a rgb camera which can oscillate by 90° in both directions, resembling a stylized dog. The movement is handled by a differential drive.
+\image html pet.PNG
+<center>Pet</center>
+
+* The pet world is a delimited planar surface of dimension 16x16 with center at 0x0, the only objects inside the map are the user(a person sitted on a chair), the ball(a green sphere) and the pet, there can be no obstacles between the robot and the ball, which means that obstacle avoidance algorithms are not required.
+
+\image html world.PNG
+<center>World</center>
 
 ## Software Architecture, State Machine and communications
 
 ### Architecture
 The software architecture consists of two main areas: the world and the pet, programmatically represented by the two packages that compose this implementation.  
-The first handle how the world is organized and works externally to the pet. This means that the commander, the Pet-logic(now simply interpretable as Logic) and the movement of the ball can ba all thought to be component of this macro-architecture.  
+The first handle how the world is organized and works externally to the pet. This means that the commander, the Pet_logic(now simply interpretable as Logic) and the movement of the ball can ba all thought to be component of this macro_architecture.  
 Going to the Pet, this can be considered as connected to the world over just two aspect:  
 * The Perception: that handles how the pet perceives the world and in particular the ball
 * The Logic: which is simply a remaining part from the first assignment, in which this node controlled both the command interpretation and the control of the robot state.  
 Here we show the architecture image:  
 
-\image html Components_diagram.PNG
+\image html Component_diagrams.PNG
 <center>Component Diagram</center>
-
 
 Going in depth of the components, we have:  
 * Random command generator(Command_giver.py): randomically send a string representing the concatenation of one or more commands of the form: 'play'(to start the play state),'point to x y'(to simulate the pointing gesture to x y),'go to x y'(to simulate the voice command to x y) and 'hide'(to stop the play state without entering the sleep state)
 * Interpreter(Pet_logic.py): to interpret the string commands and translate them to movement of the ball, moreover, it handles the switch from play and normal to sleep and from sleep to normal
-* Pet behaviours(Pet_behaviours.py)- that simulate behaviours as a finite state, in the already mentioned states
+* Pet behaviours(Pet_behaviours.py): that simulate behaviours as a finite state, in the already mentioned states
 * Perception(robot_following.py): which is the node that handles the camera inputs(target identification and research) and the hardware control for these tasks(control of the neck joint(target tracking) and body(target search) ) 
 * Actor: may or may not be present and provides the same type of messages that the Command_giver provides, adding also symbolical location such as "home" and "owner", moreover can query or set the state of the robot and interact with the parameters.
 * Ball: representation of the logic controlling the ball
-* Robot Control: representation of the low-level control of the ball
+* Robot Control: representation of the low_level control of the ball
 * Gazebo: although not a logic part of the component diagram, it represent the way ball, robot control and perception are fundamentally part of the simulation and communicate with it
 
 Here we can see how these elements communicate between themselves and with the Gazebo simulation environment:  
@@ -43,12 +52,11 @@ Here we can see how these elements communicate between themselves and with the G
 \image html rqt_graph.PNG
 <center>Component Diagram</center>
 
-
 ### State Machine
 Now, we can discuss the finite state machine. This, can be described by the following image:
 
-
-Image  
+\image html general_state_machine
+<center>Finite state machine diagram</center>
 
 The Normal state is the simplest in nature of the three states, it simply consist of a loop of setting random destinations inside the grid without other interventions while the targets are not achieved.  
 
@@ -91,6 +99,46 @@ Regarding the messages, they will be listed as
 * exp_assignment.PlanningAction: message of the action server, it is used by the Pet_logic and Behaviour to use the action server of the ball and robot respectively
 
 ## Packages and file list
+```sh
+Experimental_assignment_2
+   Lexp_assignment2
+   |   L__ action
+   |   |   L__ Planning.action
+   |   L__ CMakeLists.txt
+   |   L__ config
+   |   |   L__ motors_config.yaml
+   |   L__ launch
+   |   |   L__ gazebo_world.launch
+   |   L__ package.xml
+   |   L__ scripts
+   |   |   L__ go_to_point_action.py
+   |   |   L__ go_to_point_ball.py
+   |   L__ urdf
+   |   |   L__ ball.gazebo
+   |   |   L__ ball.xacro
+   |   |   L__ human.urdf
+   |   |   L__ robot.gazebo
+   |   |   L__ robot.xacro
+   |   L__ worlds
+   |       L__ world_assignment.world
+   Lpet_2
+   |   L__ CMakeLists.txt
+   |   L__ launch
+   |   |   L__ launcher.launch
+   |   L__ package.xml
+   |   L__ scripts
+   |       L__Command_giver.py
+   |       L__Pet_logic.py
+   |       L__Pet_behaviours.py
+   |       L__state_outfit_simulation_node.py
+   LImages
+   Lhtml
+   |   LSearch
+   |   |   L....
+   |   ...
+   LReadme.md
+   LReadme1.md
+```
 
 As already said, the implementation is based on two packages: exp_assignment2 and pet_2.  
 The first handle the simulation of the environment and the movements of the elements in it. In particular, it contains the world, robot and ball description, with the additional control parameters and related topics.  
