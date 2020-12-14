@@ -2,10 +2,12 @@
 
 <a href="http://htmlpreview.github.io/?https://github.com/Matt98x/Experimental_assignment_2/blob/main/html/index.html" title="Documentation">Documentation</a>
 
+Documentation might take some time to load completely
+
 ## Introduction
 
-This assignment target is to build an ROS architecture to implement a robot, simulating a pet, that
-interact with a human and moves in a discrete 2D environment.  
+This assignment target is to build a ROS architecture to implement a robot, simulating a pet, that
+interacts with a human and moves in a discrete 2D environment.  
 The pet has three states representing behaviours, that are simulated as a finite state machine with 3 states:  
 * Play 
 * Sleep 
@@ -16,7 +18,7 @@ These states determine the way the robot act inside the grid, whether moving ran
 The robot will change between states randomly, eccept for play, which is received by the user indirectly: by imposing a positive height with respect to the ground to the ball which can now be seen by the robot and activate the play routine.  
 
 With respect to the first assignment, with the new simulation environment, both the world and the pet have been modified:
-* The pet has is composed by a 2 weeled robot, with balance handled by a sphere(spherical wheel), a long neck in the front and a rgb camera which can oscillate by 90° in both directions, resembling a stylized dog. The movement is handled by a differential drive.
+* The pet is composed of: a 2 wheeled robot, with balance handled by a sphere(spherical wheel), a long neck in the front and a rgb camera which can oscillate by 90° in both directions, resembling a stylized dog. The movement is handled by a differential drive.
 <p align="center">
   <img src="https://github.com/Matt98x/Experimental_assignment_2/blob/main/Images/pet.PNG?raw=true "Title"">
 </p>
@@ -34,8 +36,8 @@ With respect to the first assignment, with the new simulation environment, both 
 
 ### Architecture
 The software architecture consists of two main areas: the world and the pet, programmatically represented by the two packages that compose this implementation.  
-The first handle how the world is organized and works externally to the pet. This means that the commander, the Pet-logic(now simply interpretable as Logic) and the movement of the ball can ba all thought to be component of this macro-architecture.  
-Going to the Pet, this can be considered as connected to the world over just two aspect:  
+The first handles how the world is organized and works externally to the pet. This means that the commander, the Pet-logic(now simply interpretable as Logic) and the movement of the ball can be all thought to be component of this macro-architecture.  
+Going to the Pet, this can be considered as connected to the world over just two aspects:  
 * The Perception: that handles how the pet perceives the world and in particular the ball
 * The Logic: which is simply a remaining part from the first assignment, in which this node controlled both the command interpretation and the control of the robot state.  
 Here we show the architecture image:  
@@ -47,9 +49,9 @@ Here we show the architecture image:
 </p>
 
 Going in depth of the components, we have:  
-* Random command generator(Command_giver.py): randomically send a string representing the concatenation of one or more commands of the form: 'play'(to start the play state),'point to x y'(to simulate the pointing gesture to x y),'go to x y'(to simulate the voice command to x y) and 'hide'(to stop the play state without entering the sleep state)
+* Random command generator(Command_giver.py): randomically sends a string representing a commands of the form: 'play'(to start the play state),'point to x y'(to simulate the pointing gesture to x y),'go to x y'(to simulate the voice command to x y) and 'hide'(to stop the play state without entering the sleep state)
 * Interpreter(Pet_logic.py): to interpret the string commands and translate them to movement of the ball, moreover, it handles the switch from play and normal to sleep and from sleep to normal
-* Pet behaviours(Pet_behaviours.py)- that simulate behaviours as a finite state, in the already mentioned states
+* Pet behaviours(Pet_behaviours.py): that simulates behaviours as a finite state, in the already mentioned states
 * Perception(robot_following.py): which is the node that handles the camera inputs(target identification and research) and the hardware control for these tasks(control of the neck joint(target tracking) and body(target search) ) 
 * Actor: may or may not be present and provides the same type of messages that the Command_giver provides, adding also symbolical location such as "home" and "owner", moreover can query or set the state of the robot and interact with the parameters.
 * Ball: representation of the logic controlling the ball
@@ -76,13 +78,13 @@ Now, we can discuss the finite state machine. This, can be described by the foll
 
 The Normal state is the simplest in nature of the three states, it simply consist of a loop of setting random destinations inside the grid without other interventions while the targets are not achieved.  
 
-On the other hand, the sleep consist in setting the target to 'home' (set in the parameter server), and, when the position is achieved, just wait ignoring all signals exept for the change of state.  
+On the other hand, the sleep consists in setting the target to 'home' (set in the parameter server), and, when the position is achieved, just wait ignoring all signals exept for the change of state.  
 
-While the 'Sleep' and 'Normal' state are quite simple in nature, the 'Play' state is quite more complex in nature.  
+While the 'Sleep' and 'Normal' states are quite simple in nature, the 'Play' state is quite more complex in nature.  
 
 Of course, having to consider the position of the ball without having it, we have to construct a control with the few notions we have: the relative radius of the ball and the angle of the neck with respect to the principal axis of the chassis(that is the principal axis of the robot).  
 
-With this, the algorithm is to first minimize the angular offset of the neck w.r.t. the body rotating the body itself and then set a linear velocity while you receive the two data from the Perception node.  
+With this, the algorithm is to first minimize the angular offset of the neck w.r.t. the body rotating the body itself and then set a linear velocity while the robot receives the two data from the Perception node.  
 
 Obviously, while this process is happening, the state is checked and change if the change conditions are satisfied.  
 
@@ -100,9 +102,9 @@ The main parameters used for this implementation are:
 * /human_description: gazebo description of the human model
 * /robot/camera1: set of parameters of the camera sensor
 * /robot/joint1_position_controller: parameters for the neck joint
-* /robot/joint_state_controller: parameters for the robot
+* /robot/joint_state_controller: parameters for the robot controller
 * /robot/robot_description: gazebo robot description
-* /state: state of the pet(play, normal, sleep)
+* /state: state of the pet(2 play,1 normal,0 sleep)
 * /gazebo: gazebo anvironment parameters  
 
 Regarding the messages, they will be listed as  
@@ -113,6 +115,13 @@ Regarding the messages, they will be listed as
 * sensor_msgs:JointStates: Used to read the values of the robot states
 * sensor_msgs:Image: Message with the image camera information
 * exp_assignment.PlanningAction: message of the action server, it is used by the Pet_logic and Behaviour to use the action server of the ball and robot respectively
+```sh
+	.geometry_msgs/PoseStamped target_pose
+	---
+	---
+	string stat
+	geometry_msgs/Pose position
+ ```
 
 ## Packages and file list
 ```sh
@@ -182,8 +191,12 @@ Starting from exp_assignment2:
 
 * Download the package from the github repository
 * Set the package in the src folder of the catkin workspace
+```sh
+	 git clone https://github.com/Matt98x/Experimental_assignment_2.git
+ ```
 * Go to the main folder of the catkin workspace and launch
 ```sh
+	 source /devel/setup.bash
 	.catkin_make
  ```
 ### Running
