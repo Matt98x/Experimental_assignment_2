@@ -1,5 +1,13 @@
 #! /usr/bin/env python
-# import ros stuff
+
+## @file go_to_point_ball.py
+# @brief Script implementing an action plan for the ball to move in a required position in the map
+#
+# Details: This component implements an action server which, on demand, control the ball to a specified location in the 2D map, communicating to the client the target achievement
+#
+
+
+## import ros stuff
 import rospy
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Twist, Point, Pose
@@ -11,15 +19,15 @@ import actionlib
 import actionlib.msg
 import exp_assignment2.msg
 
-# robot state variables
+## robot state variables
 position_ = Point()
 pose_ = Pose()
 yaw_ = 0
-# machine state
+## machine state
 state_ = 0
-# goal
+## goal
 desired_position_ = Point()
-# parameters
+## parameters
 yaw_precision_ = math.pi / 9  # +/- 20 degree allowed
 yaw_precision_2_ = math.pi / 90  # +/- 2 degree allowed
 dist_precision_ = 0.1
@@ -30,16 +38,16 @@ lb_a = -0.5
 ub_d = 2.0
 z_back = 0.25
 
-# publisher
+## publisher
 pub = None
 pubz = None
 
-# action_server
+## action_server
 act_s = None
 
-# callbacks
+## callbacks
 
-
+## Callback for the odometry
 def clbk_odom(msg):
     global position_
     global pose_
@@ -49,13 +57,13 @@ def clbk_odom(msg):
     position_ = msg.pose.pose.position
     pose_ = msg.pose.pose
 
-
+## Function to change the state of the server state machine
 def change_state(state):
     global state_
     state_ = state
     print ('State changed to [%s]' % state_)
 
-
+## function to control the ball to go straight ahead
 def go_straight_ahead(des_pos):
     global pub, state_, z_back
     err_pos = math.sqrt(pow(des_pos.y - position_.y, 2) +
@@ -90,14 +98,14 @@ def go_straight_ahead(des_pos):
         print ('Position error: [%s]' % err_pos)
         change_state(1)
 
-
+## function to handle the stop when the target is achieved
 def done():
     twist_msg = Twist()
     twist_msg.linear.x = 0
     twist_msg.linear.y = 0
     pub.publish(twist_msg)
 
-
+## Function to control the ball to the target as a finite state machine
 def planning(goal):
 
     global state_, desired_position_
@@ -139,7 +147,7 @@ def planning(goal):
         rospy.loginfo('Goal: Succeeded!')
         act_s.set_succeeded(result)
 
-
+## Main function declaration
 def main():
     global pub, active_, act_s, pubz
     rospy.init_node('go_to_point')

@@ -253,6 +253,7 @@ Going on to the features:
 * We have the robot perspective in a separate window 
 * Can show the location of the robot in the map
 * The robot can check the state without being stuck in an action server loop
+* The implementation is stable even with random commands and long running tests
 
 
 ## Possible technical improvements

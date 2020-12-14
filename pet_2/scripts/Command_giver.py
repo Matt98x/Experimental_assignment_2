@@ -14,7 +14,7 @@ import sys
 import random
 import time
 
-##Variable declaration
+## Variable declaration
 
 
 ## Main function declaration

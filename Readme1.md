@@ -55,7 +55,7 @@ Here we can see how these elements communicate between themselves and with the G
 ### State Machine
 Now, we can discuss the finite state machine. This, can be described by the following image:
 
-\image html general_state_machine
+\image html general_state_machine.PNG
 <center>Finite state machine diagram</center>
 
 The Normal state is the simplest in nature of the three states, it simply consist of a loop of setting random destinations inside the grid without other interventions while the targets are not achieved.  
@@ -236,6 +236,7 @@ Going on to the features:
 * We have the robot perspective in a separate window 
 * Can show the location of the robot in the map
 * The robot can check the state without being stuck in an action server loop
+* The implementation is stable even with random commands and long running tests
 
 
 ## Possible technical improvements

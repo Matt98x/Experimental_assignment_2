@@ -1,12 +1,12 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 
-## @file got_to_point_action.py
+## @file go_to_point_action.py
 # @brief Script implementing an action plan for the robot to move in a required position in the map
 #
 # Details: This component implements an action server which, on demand, control the robot to a specified location in the 2D map, communicating to the client the status of the operation
 #
 
-##! import ros stuff
+## import ros stuff
 import rospy
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Twist, Point, Pose
@@ -92,6 +92,7 @@ def fix_yaw(des_pos):
         print 'Yaw error: [%s]' % err_yaw
         change_state(1)
 
+## function to go straight ahead
 def go_straight_ahead(des_pos):
     global yaw_, pub, yaw_precision_, state_
     desired_yaw = math.atan2(des_pos.y - position_.y, des_pos.x - position_.x)
@@ -117,13 +118,14 @@ def go_straight_ahead(des_pos):
         print 'Yaw error: [%s]' % err_yaw
         change_state(0)
 
+## Function to terminate the control when target is achieved 
 def done():
     twist_msg = Twist()
     twist_msg.linear.x = 0
     twist_msg.angular.z = 0
     pub.publish(twist_msg)
     
-    
+## Function to plan the control to reach the target
 def planning(goal):
 	
 	global state_,desired_position_
@@ -169,6 +171,7 @@ def planning(goal):
 		rospy.loginfo('Goal: Succeeded!')
 		act_s.set_succeeded(result)
 
+## main function
 def main():
     global pub, active_, act_s
     rospy.init_node('go_to_point')

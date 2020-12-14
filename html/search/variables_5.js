@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['objectives',['objectives',['../robot__following_8py.html#a93ac754088dbbe7657e736dbd52526f6',1,'robot_following']]],
-  ['outcome',['outcome',['../Pet__behaviours_8py.html#af096456cf166ae9c4c159843b5ea1421',1,'Pet_behaviours']]]
+  ['np_5farr',['np_arr',['../classrobot__following_1_1image__feature.html#a6e94d4939aeded0c9aa0972c83fe4949',1,'robot_following::image_feature']]]
 ];
