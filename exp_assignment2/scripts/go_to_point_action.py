@@ -1,5 +1,12 @@
 #! /usr/bin/env python
-# import ros stuff
+
+## @file got_to_point_action.py
+# @brief Script implementing an action plan for the robot to move in a required position in the map
+#
+# Details: This component implements an action server which, on demand, control the robot to a specified location in the 2D map, communicating to the client the status of the operation
+#
+
+##! import ros stuff
 import rospy
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Twist, Point, Pose
@@ -10,18 +17,18 @@ import actionlib
 import actionlib.msg
 import motion_plan.msg 
 
-# robot state variables
+## robot state variables
 position_ = Point()
 pose_ = Pose()
 yaw_ = 0
-# machine state
+## machine state
 state_ = 0
-# goal
+## goal
 desired_position_ = Point()
 desired_position_.z = 0
-# parameters
-yaw_precision_ = math.pi / 9 # +/- 20 degree allowed
-yaw_precision_2_ = math.pi / 90 # +/- 2 degree allowed
+## parameters
+yaw_precision_ = math.pi / 9 ## +/- 20 degree allowed
+yaw_precision_2_ = math.pi / 90 ## +/- 2 degree allowed
 dist_precision_ = 0.1
 kp_a = 3.0
 kp_d = 0.2
@@ -29,13 +36,13 @@ ub_a = 0.9
 lb_a = -0.9
 ub_d = 0.6
 
-# publisher
+## publisher
 pub = None
 
-#action_server
+## action_server
 act_s = None
 
-# callbacks
+## callbacks
 def clbk_odom(msg):
     global position_
     global pose_
@@ -53,7 +60,7 @@ def clbk_odom(msg):
         msg.pose.pose.orientation.w)
     euler = transformations.euler_from_quaternion(quaternion)
     yaw_ = euler[2]
-
+## change state
 def change_state(state):
     global state_
     state_ = state
